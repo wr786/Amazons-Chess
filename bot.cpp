@@ -151,35 +151,35 @@ inline int ChessBoard::Move(int x_start, int y_start, int x_final, int y_final, 
     if(color == -1) {
     	color = turn_player;
     }
-    // // 错误判断
-    // if(!In_Board(x_start, y_start) || !In_Board(x_final, y_final) || !In_Board(x_block, y_block)) {
-    //     cout << "非法坐标：坐标越界！ErrorType:37510\n";
-    //     return 37510;
-    // }
-    // if(board[x_start][y_start] != color) {
-    //     cout << "非法坐标：这个位置没有您的棋！ErrorType:11037\n";
-    //     // for DEBUG
-    //     cout << x_start << y_start << " : " << board[x_start][y_start] << endl;
-    //    	for(int i=0; i<4; i++)
-    //    		cout << chess[color][i];
-    //    	// for DEBUG
-    //     //cout << "board[" << x_start << "][" << y_start << "] = " << board[x_start][y_start];
-    //     return 11037;
-    // }
-    // if(board[x_final][y_final] || (board[x_block][y_block] && !(x_block == x_start && y_block == y_start))) { // 特判回马枪情形
-    //     cout << "非法坐标：需求坐标已被占用！ErrorType:23333\n";
-    //     return 23333;
-    // }
-    // int deltax = abs(x_final - x_start), deltay = abs(y_final - y_start);
-    // if(!(deltax == 0) && !(deltay == 0) && !(deltax == deltay)) { // 移动合法性判断
-    //     cout << "非法移动：棋子移动方法不在8个方向上！ErrorType:88888\n";
-    //     return 88888;
-    // }
-    // deltax = abs(x_block - x_final), deltay = abs(y_block - y_final);
-    // if(!(deltax == 0) && !(deltay == 0) && !(deltax == deltay)) { // 障碍物合法性判断
-    //     cout << "非法障碍：障碍物摆放方法不在8个方向上！ErrorType:10086\n";
-    //     return 88889;
-    // }
+    // 错误判断
+    if(!In_Board(x_start, y_start) || !In_Board(x_final, y_final) || !In_Board(x_block, y_block)) {
+        cout << "非法坐标：坐标越界！ErrorType:37510\n";
+        return 37510;
+    }
+    if(board[x_start][y_start] != color) {
+        cout << "非法坐标：这个位置没有您的棋！ErrorType:11037\n";
+        // for DEBUG
+        cout << x_start << y_start << " : " << board[x_start][y_start] << endl;
+       	for(int i=0; i<4; i++)
+       		cout << chess[color][i];
+       	// for DEBUG
+        //cout << "board[" << x_start << "][" << y_start << "] = " << board[x_start][y_start];
+        return 11037;
+    }
+    if(board[x_final][y_final] || (board[x_block][y_block] && !(x_block == x_start && y_block == y_start))) { // 特判回马枪情形
+        cout << "非法坐标：需求坐标已被占用！ErrorType:23333\n";
+        return 23333;
+    }
+    int deltax = abs(x_final - x_start), deltay = abs(y_final - y_start);
+    if(!(deltax == 0) && !(deltay == 0) && !(deltax == deltay)) { // 移动合法性判断
+        cout << "非法移动：棋子移动方法不在8个方向上！ErrorType:88888\n";
+        return 88888;
+    }
+    deltax = abs(x_block - x_final), deltay = abs(y_block - y_final);
+    if(!(deltax == 0) && !(deltay == 0) && !(deltax == deltay)) { // 障碍物合法性判断
+        cout << "非法障碍：障碍物摆放方法不在8个方向上！ErrorType:10086\n";
+        return 88889;
+    }
     // 坐 标 移 动
     int chessidx = 0;
     for(;chessidx<4;chessidx++) {if(chess[color][chessidx] == x_start*10 + y_start) break;}

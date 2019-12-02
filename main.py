@@ -55,6 +55,7 @@ class GameWindow(QWidget):
         self.Hint_button = QPushButton(self)
         self.Save_button = QPushButton(self)
         self.Read_button = QPushButton(self)
+        self.Skin_button = QPushButton(self)
 
         self.Redo_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'REDO.png')))
         self.Redo_button.setIconSize(QSize(80,80))
@@ -64,11 +65,14 @@ class GameWindow(QWidget):
         self.Save_button.setIconSize(QSize(80,80))
         self.Read_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'READ.png')))
         self.Read_button.setIconSize(QSize(80,80))
+        self.Skin_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'SKIN.png')))
+        self.Skin_button.setIconSize(QSize(80,80))
 
         self.Redo_button.setText("悔棋")
         self.Hint_button.setText("提示")
         self.Save_button.setText("读档")
         self.Read_button.setText("存档")
+        self.Skin_button.setText("换肤")
 
         self.Redo_button.setStyleSheet( "QPushButton{color:black}"
                               "QPushButton{background-color:white}"
@@ -94,16 +98,24 @@ class GameWindow(QWidget):
                               "QPushButton{padding:20px 40px}"
                               "QPushButton{font-size: 48px}"
                               "QPushButton{font-family:'Microsoft YaHei'}")
+        self.Skin_button.setStyleSheet( "QPushButton{color:black}"
+                              "QPushButton{background-color:white}"
+                              "QPushButton{border:2px}"
+                              "QPushButton{padding:20px 40px}"
+                              "QPushButton{font-size: 48px}"
+                              "QPushButton{font-family:'Microsoft YaHei'}")
 
         self.Redo_button.setGeometry(1260, 150, 280, 100)
         self.Hint_button.setGeometry(1260, 300, 280, 100)
         self.Save_button.setGeometry(1260, 450, 280, 100)
         self.Read_button.setGeometry(1260, 600, 280, 100)
+        self.Skin_button.setGeometry(1260, 750, 280, 100)
 
         self.Redo_button.clicked.connect(self.regret)
         self.Hint_button.clicked.connect(self.hint)
         self.Save_button.clicked.connect(self.saveLog)
         self.Read_button.clicked.connect(self.readLog)
+        self.Skin_button.clicked.connect(self.changeSkin)
 
     def showChess(self):
         for i in range(8):
@@ -152,6 +164,9 @@ class GameWindow(QWidget):
         pass
 
     def hint(self): # 提示
+        pass
+
+    def changeSkin(self): # 换肤
         pass
 
 if __name__ == '__main__':

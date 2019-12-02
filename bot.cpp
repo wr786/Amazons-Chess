@@ -23,13 +23,13 @@ int PERM4[PERMUTATION_4_MAX][4] = {
 
 class ChessBoard { // 每个棋盘都是UCTree的一个节点！（暴论）
     private:
-        int board[8][8]; // 棋盘本盘
         //           → ↘  ↓  ↙ ←  ↖   ↑   ↗
         int dx[8] = {0, 1, 1, 1, 0, -1, -1, -1};
         int dy[8] = {1, 1, 0, -1, -1, -1, 0, 1};
         int chess[3][4]; // 存取四个棋所在的xy坐标，1为黑棋，2为白棋,十位数为x，个位数为y
         bool hinted = false;
     public:
+    	int board[8][8]; // 棋盘本盘
         // 标记
         short BLACK = 1; // 黑棋
         short WHITE = 2; // 白棋
@@ -162,6 +162,7 @@ inline int ChessBoard::Move(int x_start, int y_start, int x_final, int y_final, 
         cout << x_start << y_start << " : " << board[x_start][y_start] << endl;
        	for(int i=0; i<4; i++)
        		cout << chess[color][i];
+       	cout << endl;
        	// for DEBUG
         //cout << "board[" << x_start << "][" << y_start << "] = " << board[x_start][y_start];
         return 11037;
@@ -622,6 +623,9 @@ inline int read() {
 }
 
 int main() {
+	freopen(".\\data\\moves.amazons", "r", stdin);
+	freopen(".\\data\\chessboard.amazons", "w", stdout);
+
     ChessBoard Board;
     Board.Reset();
     int turn_num; 
@@ -634,10 +638,17 @@ int main() {
     // cin >> x_start >> y_start >> x_final >> y_final >> x_block >> y_block;
     if(x_start == -1) {
     	if(turn_num == 1) {// 传统开局，打表
-    		printf("5 0 5 6 2 3\n"); 
+    		// printf("5 0 5 6 2 3\n"); 
+    		Board.turn_player = 1;
+    		Board.Move(0, 5, 6, 5, 3, 2);
+    		for(int i=0; i<8; i++) {
+    			for(int j=0; j<8; j++) {
+    				printf("%d ", Board.board[i][j]);
+    			}
+    			printf("\n");
+    		}
     		return 0;
     	}
-    	Board.turn_player = 1;
     }
     else {
         Board.turn_player = 1;
@@ -684,9 +695,19 @@ int main() {
 	        }
 	    }
 	    int sol = Board.child[bestidx]->last_move;
-	    printf("%d %d %d %d %d %d\n", (sol/10000)%10, sol/100000, (sol/100)%10, (sol/1000)%10, sol%10, (sol/10)%10);
+	    // printf("%d %d %d %d %d %d\n", (sol/10000)%10, sol/100000, (sol/100)%10, (sol/1000)%10, sol%10, (sol/10)%10);
 	    // cout << (sol/10000)%10 << " " << sol/100000 << " " << (sol/100)%10 << " " << (sol/1000)%10 << " " << sol%10 << " " << (sol/10)%10 << endl;
+    	Board.Move(sol/100000, (sol/10000)%10, (sol/1000)%10, (sol/100)%10, (sol/10)%10, sol%10);
+    	for(int i=0; i<8; i++) {
+    			for(int j=0; j<8; j++) {
+    				printf("%d ", Board.board[i][j]);
+    			}
+    			printf("\n");
+    		}
     }
+
+    fclose(stdin);
+    fclose(stdout);
     // cout << "#DEBUG:" << efficiency << endl;
     // system("pause");
     return 0;

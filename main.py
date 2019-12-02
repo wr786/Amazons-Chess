@@ -21,10 +21,12 @@ class GameWindow(QWidget):
         palette1.setBrush(self.backgroundRole(), QBrush(QPixmap(os.path.join(os.path.abspath('.'), 'source', 'background.jpg'))))
         self.setPalette(palette1)
         
-        self.readLog()
+        self.showChess()
+        # self.readLog()
 
     def init_chess_board(self):
         self.ChessBoard_unit = [[0] * 8 for _ in range(8)] # 生成ChessBoard单元 8×8
+        self.ChessBoard_unit_content = [[0] * 8 for _ in range(8)]
         for i in range(8):
             for j in range(8):
                 self.ChessBoard_unit[i][j] = QPushButton(self)
@@ -36,7 +38,17 @@ class GameWindow(QWidget):
                 self.ChessBoard_unit[i][j].setGeometry(250 + 100*(i-1), 250 + 100*(j-1), 100, 100)
                 self.ChessBoard_unit[i][j].setIconSize(QSize(110,110))
                 self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-                self.ChessBoard_unit[i][j].clicked.connect(self.test)
+                # self.ChessBoard_unit[i][j].clicked.connect(self.test)
+        # 这里的坐标都是转置过的，后续坐标也要记得转置……
+        self.ChessBoard_unit_content[0][2] = 1
+        self.ChessBoard_unit_content[2][0] = 1
+        self.ChessBoard_unit_content[5][0] = 1
+        self.ChessBoard_unit_content[7][2] = 1
+        self.ChessBoard_unit_content[0][5] = 2
+        self.ChessBoard_unit_content[2][7] = 2
+        self.ChessBoard_unit_content[5][7] = 2
+        self.ChessBoard_unit_content[7][5] = 2
+
 
     def init_buttons(self):
         self.Redo_button = QPushButton(self)
@@ -93,16 +105,44 @@ class GameWindow(QWidget):
         self.Save_button.clicked.connect(self.saveLog)
         self.Read_button.clicked.connect(self.readLog)
 
+    def showChess(self):
+        for i in range(8):
+            for j in range(8):
+                chesstype = self.ChessBoard_unit_content[i][j]
+                if chesstype == 0: # EMPTY
+                    self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+                elif chesstype == 1: # BLACK
+                    self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+                elif chesstype == 2: # WHITE
+                    self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
+                elif chesstype == -1: # BLOCK
+                    self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLOCK.png')))
+        # sender = self.sender() # 用sender来获取发送者
+        # sender.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
+
+    def calc(self):
+        os.system('bot.exe')
 
     # <----------------------------------------测试区------------------------------------>
-    def test(self):
-        sender = self.sender() # 用sender来获取发送者
-        sender.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
 
-    # <----------------------------------------待施工------------------------------------>
-    def readLog(self): # 读档 
-        f = open(os.path.join(os.path.abspath('.'), 'data', 'chessboard.amazons'), "r")    
+    def initLog(self): # 从零开始游戏
+        f = open(os.path.join(os.path.abspath('.'), 'data', 'moves.amazons'), 'w')
+        f.write("1 -1 -1 -1 -1 -1 -1")
         f.close()
+
+    def readLog(self): # 读档 
+        f = open(os.path.join(os.path.abspath('.'), 'data', 'chessboard.amazons'), "r")
+        rownum = 0
+        for line in f:
+            items = line.split() # 以空格分割
+            colnum = 0
+            for item in items:
+                chesstype = int(item)
+                self.showChess(self, rownum, colnum, chesstype)
+                colnum += 1
+            rownum += 1
+        f.close()
+    # <----------------------------------------待施工------------------------------------>
 
     def saveLog(self): # 存档
         f = open(os.path.join(os.path.abspath('.'), 'data', 'moves.amazons'), 'w')

@@ -253,14 +253,14 @@ class GameWindow(QWidget):
 
     def judgeWin(self):
         locked = [[False] * 5 for _ in range(3)] # 记录[某颜色]的第[i]个棋子是否被锁死，其中第5项存储是否全部被锁死
-        for i in range(8):
-            for j in range(8):
-                print((self.ChessBoard_unit_content[i][j]), end = " ")
-            print("\n")
+        # for i in range(8):
+        #     for j in range(8):
+        #         print((self.ChessBoard_unit_content[i][j]), end = " ")
+        #     print("\n")
         for i in range(4):
             locked[1][i] = not self.canMove(self.chess[1][i]//10, self.chess[1][i]%10) # // 是整除
             locked[2][i] = not self.canMove(self.chess[2][i]//10, self.chess[2][i]%10)
-            print("{} {}: {} {}\n".format(self.chess[1][i], self.chess[2][i], locked[1][i], locked[2][i]))
+            # print("{} {}: {} {}\n".format(self.chess[1][i], self.chess[2][i], locked[1][i], locked[2][i]))
         locked[1][4] = locked[1][0] & locked[1][1] & locked[1][2] & locked[1][3]
         locked[2][4] = locked[2][0] & locked[2][1] & locked[2][2] & locked[2][3]
         # print("sum:{} {}\n".format(locked[1][4], locked[2][4]))

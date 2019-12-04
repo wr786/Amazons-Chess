@@ -2,7 +2,7 @@ import sys
 import os
 from PyQt5.QtGui import QIcon, QPalette, QBrush, QPixmap
 from PyQt5.QtCore import pyqtSignal, QSize, QTimer
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout, QPushButton, QVBoxLayout, QMessageBox
 
 def inBoard(x, y):
     if(x < 0 or x >= 8 or y < 0 or y >= 8):
@@ -58,7 +58,6 @@ class GameWindow(QWidget):
         self.dx = [0, 1, 1, 1, 0, -1, -1, -1]
         self.dy = [1, 1, 0, -1, -1, -1, 0, 1]
         self.selectChessFlag = False
-        self.selectBlockFlag = False
         self.turn_player = 1
 
 
@@ -149,8 +148,8 @@ class GameWindow(QWidget):
     def selectChess(self):
         # 此处应有判断是否为自己的棋子
         if self.selectChessFlag: # 此处应有弹出提示框
-            pass
-        self.selectChessFlag = True
+            QMessageBox.critical(self,"请先把这步走完！","恁已经选择了一个棋子，请先把这步走完！",QMessageBox.Ok)
+            return
         sender = self.sender()
         x = -1
         y = -1
@@ -162,8 +161,12 @@ class GameWindow(QWidget):
                     break        
             if x != -1:
                 break
+        if self.ChessBoard_unit_content[x][y] != self.turn_player:
+            QMessageBox.critical(self,"这不是恁的棋子！","这不是恁的棋子，请选择恁的棋子！",QMessageBox.Ok)
+            return
         self.ox = x
         self.oy = y
+        self.selectChessFlag = True
         for dir in range(8):
             nx = x + self.dx[dir]
             ny = y + self.dy[dir]
@@ -176,9 +179,6 @@ class GameWindow(QWidget):
                 ny += self.dy[dir]
 
     def selectBlock(self):
-        if self.selectBlockFlag: # 此处应有弹出提示框
-            pass
-        self.selectBlockFlag = True
         sender = self.sender()
         x = -1
         y = -1
@@ -236,7 +236,7 @@ class GameWindow(QWidget):
         self.ChessBoard_unit_content[self.bx][self.by] = -1
         self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLOCK.png')))
         self.selectChessFlag = False
-        self.selectBlockFlag = False
+        self.turn_player = 3 - self.turn_player
 
     def calc(self):
         os.system('bot.exe')

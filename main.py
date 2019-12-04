@@ -196,24 +196,47 @@ class GameWindow(QWidget):
         if self.turn_player == 1:
             self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
         else:
-            self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+            self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
+        self.ex = x
+        self.ey = y
         for dir in range(8):
             nx = x + self.dx[dir]
             ny = y + self.dy[dir]
             while(inBoard(nx, ny) and (self.ChessBoard_unit_content[nx][ny] == 0 or (nx == self.ox and ny == self.oy))):
                 self.ChessBoard_unit[nx][ny].clicked.disconnect(self.selectChess)
                 self.ChessBoard_unit[nx][ny].clicked.connect(self.procMove)
-                self.ex = x
-                self.ey = y
-                self.bx = nx
-                self.by = ny
                 self.ChessBoard_unit_content[nx][ny] = -19260817 # 被标记为红色的可以放障碍物的格子
                 self.ChessBoard_unit[nx][ny].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'CANBLOCK.png')))
                 nx += self.dx[dir]
                 ny += self.dy[dir]
 
     def procMove(self):
-        pass
+        sender = self.sender()
+        x = -1
+        y = -1
+        for i in range(8):
+            for j in range(8):
+                if self.ChessBoard_unit[i][j] == sender:
+                    x = i
+                    y = j
+                if self.ChessBoard_unit_content[i][j] == -19260817: # 恢复
+                    self.ChessBoard_unit_content[i][j] = 0
+                    self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+                    self.ChessBoard_unit[i][j].clicked.disconnect(self.procMove)
+                    self.ChessBoard_unit[i][j].clicked.connect(self.selectChess)
+        self.bx = x
+        self.by = y
+        self.ChessBoard_unit_content[self.ox][self.oy] = 0
+        self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+        self.ChessBoard_unit_content[self.ex][self.ey] = self.turn_player
+        if self.turn_player == 1:
+            self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+        else:
+            self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
+        self.ChessBoard_unit_content[self.bx][self.by] = -1
+        self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLOCK.png')))
+        self.selectChessFlag = False
+        self.selectBlockFlag = False
 
     def calc(self):
         os.system('bot.exe')

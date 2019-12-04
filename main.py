@@ -59,7 +59,7 @@ class GameWindow(QWidget):
         self.dy = [1, 1, 0, -1, -1, -1, 0, 1]
         self.selectChessFlag = False
         self.turn_player = 1
-
+        self.chess = [[0, 0, 0, 0], [2, 20, 50, 72], [5, 27, 57, 75]] # 记录棋子的位置
 
     def init_buttons(self):
         self.Redo_button = QPushButton(self)
@@ -142,8 +142,6 @@ class GameWindow(QWidget):
                     self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLOCK.png')))
         # sender = self.sender() # 用sender来获取发送者
         # sender.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
-
-    # <----------------------------------------测试区------------------------------------>
 
     def selectChess(self):
         # 此处应有判断是否为自己的棋子
@@ -236,8 +234,41 @@ class GameWindow(QWidget):
         self.ChessBoard_unit_content[self.bx][self.by] = -1
         self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLOCK.png')))
         self.selectChessFlag = False
+        for i in range(4):
+            if self.chess[self.turn_player][i] == self.ox * 10 + self.oy: # 找到被移动的棋
+                self.chess[self.turn_player][i] = self.ex * 10 + self.ey
+                break
         self.turn_player = 3 - self.turn_player
+        self.judgeWin()
 
+    def canMove(self, x, y):
+        for dir in range(8):
+            nx = x + self.dx[dir]
+            ny = y + self.dy[dir]
+            if(not inBoard(nx, ny)):
+                continue
+            if(self.ChessBoard_unit_content[nx][ny] == 0): # 如果有一个方向可以动那就没有被锁死
+                return True
+        return False
+
+    def judgeWin(self):
+        locked = [[False] * 5 for _ in range(3)] # 记录[某颜色]的第[i]个棋子是否被锁死，其中第5项存储是否全部被锁死
+        for i in range(8):
+            for j in range(8):
+                print((self.ChessBoard_unit_content[i][j]), end = " ")
+            print("\n")
+        for i in range(4):
+            locked[1][i] = not self.canMove(self.chess[1][i]//10, self.chess[1][i]%10) # // 是整除
+            locked[2][i] = not self.canMove(self.chess[2][i]//10, self.chess[2][i]%10)
+            print("{} {}: {} {}\n".format(self.chess[1][i], self.chess[2][i], locked[1][i], locked[2][i]))
+        locked[1][4] = locked[1][0] & locked[1][1] & locked[1][2] & locked[1][3]
+        locked[2][4] = locked[2][0] & locked[2][1] & locked[2][2] & locked[2][3]
+        # print("sum:{} {}\n".format(locked[1][4], locked[2][4]))
+        if(locked[1][4]):
+            QMessageBox.information(self,"游戏结束","白方获胜！",QMessageBox.Ok)
+        elif(locked[2][4]):
+            QMessageBox.information(self,"游戏结束","黑方获胜！",QMessageBox.Ok)
+    # <----------------------------------------待施工------------------------------------>
     def calc(self):
         os.system('bot.exe')
 
@@ -258,7 +289,6 @@ class GameWindow(QWidget):
                 colnum += 1
             rownum += 1
         f.close()
-    # <----------------------------------------待施工------------------------------------>
 
     def saveLog(self): # 存档
         f = open(os.path.join(os.path.abspath('.'), 'data', 'moves.amazons'), 'w')

@@ -60,6 +60,7 @@ class GameWindow(QWidget):
         self.selectChessFlag = False
         self.turn_player = 1
         self.chess = [[0, 0, 0, 0], [2, 20, 50, 72], [5, 27, 57, 75]] # 记录棋子的位置
+        self.canRegret = False
 
     def init_buttons(self):
         self.Redo_button = QPushButton(self)
@@ -252,6 +253,7 @@ class GameWindow(QWidget):
                 break
         self.turn_player = 3 - self.turn_player
         self.judgeWin()
+        self.canRegret = True
 
     def canMove(self, x, y):
         for dir in range(8):
@@ -298,8 +300,29 @@ class GameWindow(QWidget):
         self.selectChessFlag = False
         self.turn_player = 1
         self.chess = [[0, 0, 0, 0], [2, 20, 50, 72], [5, 27, 57, 75]] # 记录棋子的位置
+        self.canRegret = False
 
         self.showChess()
+
+    def regret(self): # 悔棋
+        if not self.canRegret:
+            QMessageBox.critical(self,"约束！","恁现在不能悔棋！",QMessageBox.Ok)
+            return
+        self.canRegret = False
+        self.turn_player = 3 - self.turn_player
+        self.ChessBoard_unit_content[self.ex][self.ey] = 0
+        self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+        self.ChessBoard_unit_content[self.bx][self.by] = 0
+        self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+        self.ChessBoard_unit_content[self.ox][self.oy] = self.turn_player
+        if self.turn_player == 1:
+            self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+        else:
+            self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
+        for i in range(4):
+            if self.chess[self.turn_player][i] == self.ex * 10 + self.ey: # 找到被移动的棋
+                self.chess[self.turn_player][i] = self.ox * 10 + self.oy
+                break
     # <----------------------------------------待施工------------------------------------>
     def calc(self):
         os.system('bot.exe')
@@ -325,9 +348,6 @@ class GameWindow(QWidget):
     def saveLog(self): # 存档
         f = open(os.path.join(os.path.abspath('.'), 'data', 'moves.amazons'), 'w')
         f.close()
-
-    def regret(self): # 悔棋
-        pass
 
     def hint(self): # 提示
         pass

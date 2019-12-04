@@ -1,8 +1,17 @@
+# -*- coding: utf-8 -*-
+# author: wr786
 import sys
 import os
 from PyQt5.QtGui import QIcon, QPalette, QBrush, QPixmap
 from PyQt5.QtCore import pyqtSignal, QSize, QTimer
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout, QPushButton, QVBoxLayout, QMessageBox
+from base64 import *
+from memory_pic import *
+
+def get_pic(pic_code, pic_name):
+    image = open(pic_name, 'wb')
+    image.write(b64decode(pic_code))
+    image.close()
 
 def inBoard(x, y):
     if(x < 0 or x >= 8 or y < 0 or y >= 8):
@@ -19,11 +28,13 @@ class GameWindow(QWidget):
 
     def init_game_window(self):
         self.setWindowTitle('Amazons ~ 再生産！ © wr786')
-        self.setWindowIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'ICON.ico')))
+        # self.setWindowIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'ICON.ico')))
+        self.setWindowIcon(QIcon('ICON.ico'))
         self.setFixedSize(1600, 1080)
         # self.resize(1440, 1080)
         palette1 = QPalette()
-        palette1.setBrush(self.backgroundRole(), QBrush(QPixmap(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'background.jpg'))))
+        # palette1.setBrush(self.backgroundRole(), QBrush(QPixmap(os.path.join(os.path.abspath('.'), 'source', 'background.jpg'))))
+        palette1.setBrush(self.backgroundRole(), QBrush(QPixmap('background.jpg')))
         self.setPalette(palette1)
         
         self.showChess()
@@ -42,7 +53,8 @@ class GameWindow(QWidget):
                                   "QPushButton{padding:0px 0px}")
                 self.ChessBoard_unit[i][j].setGeometry(250 + 100*(i-1), 250 + 100*(j-1), 100, 100)
                 self.ChessBoard_unit[i][j].setIconSize(QSize(110,110))
-                self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'EMPTY.png')))
+                # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+                self.ChessBoard_unit[i][j].setIcon(QIcon('EMPTY.png'))
                 self.ChessBoard_unit[i][j].clicked.connect(self.selectChess)
                 # self.ChessBoard_unit[i][j].clicked.connect(self.test)
         # init初始坐标
@@ -70,17 +82,23 @@ class GameWindow(QWidget):
         self.Skin_button = QPushButton(self)
         self.NewGame_button = QPushButton(self)
 
-        self.Redo_button.setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'REDO.png')))
+        # self.Redo_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'REDO.png')))
+        self.Redo_button.setIcon(QIcon('REDO.png'))
         self.Redo_button.setIconSize(QSize(80,80))
-        self.Hint_button.setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'HINT.png')))
+        # self.Hint_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'HINT.png')))
+        self.Hint_button.setIcon(QIcon('HINT.png'))
         self.Hint_button.setIconSize(QSize(80,80))
-        self.Save_button.setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'SAVE.png')))
+        # self.Save_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'SAVE.png')))
+        self.Save_button.setIcon(QIcon('SAVE.png'))
         self.Save_button.setIconSize(QSize(80,80))
-        self.Read_button.setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'READ.png')))
+        # self.Read_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'READ.png')))
+        self.Read_button.setIcon(QIcon('READ.png'))
         self.Read_button.setIconSize(QSize(80,80))
-        self.Skin_button.setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'SKIN.png')))
+        # self.Skin_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'SKIN.png')))
+        self.Skin_button.setIcon(QIcon('SKIN.png'))
         self.Skin_button.setIconSize(QSize(80,80))
-        self.NewGame_button.setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'NEWGAME.png')))
+        # self.NewGame_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'NEWGAME.png')))
+        self.NewGame_button.setIcon(QIcon('NEWGAME.png'))
         self.NewGame_button.setIconSize(QSize(80,80))
 
         self.Redo_button.setText("悔棋")
@@ -146,15 +164,19 @@ class GameWindow(QWidget):
             for j in range(8):
                 chesstype = self.ChessBoard_unit_content[i][j]
                 if chesstype == 0: # EMPTY
-                    self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'EMPTY.png')))
+                    # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+                    self.ChessBoard_unit[i][j].setIcon(QIcon('EMPTY.png'))
                 elif chesstype == 1: # BLACK
-                    self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'BLACK.png')))
+                    # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+                    self.ChessBoard_unit[i][j].setIcon(QIcon('BLACK.png'))
                 elif chesstype == 2: # WHITE
-                    self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'WHITE.png')))
+                    # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
+                    self.ChessBoard_unit[i][j].setIcon(QIcon('WHITE.png'))
                 elif chesstype == -1: # BLOCK
-                    self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'BLOCK.png')))
+                    # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLOCK.png')))
+                    self.ChessBoard_unit[i][j].setIcon(QIcon('BLOCK.png'))
         # sender = self.sender() # 用sender来获取发送者
-        # sender.setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'WHITE.png')))
+        # sender.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
 
     def selectChess(self):
         # 此处应有判断是否为自己的棋子
@@ -185,7 +207,8 @@ class GameWindow(QWidget):
                 self.ChessBoard_unit[nx][ny].clicked.disconnect(self.selectChess)
                 self.ChessBoard_unit[nx][ny].clicked.connect(self.selectBlock)
                 self.ChessBoard_unit_content[nx][ny] = 19260817 # 被标记为黄色的可以去往的格子
-                self.ChessBoard_unit[nx][ny].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'CANGO.png')))
+                # self.ChessBoard_unit[nx][ny].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'CANGO.png')))
+                self.ChessBoard_unit[nx][ny].setIcon(QIcon('CANGO.png'))
                 nx += self.dx[dir]
                 ny += self.dy[dir]
 
@@ -200,14 +223,18 @@ class GameWindow(QWidget):
                     y = j
                 if self.ChessBoard_unit_content[i][j] == 19260817: # 恢复
                     self.ChessBoard_unit_content[i][j] = 0
-                    self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'EMPTY.png')))
+                    # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+                    self.ChessBoard_unit[i][j].setIcon(QIcon('EMPTY.png'))
                     self.ChessBoard_unit[i][j].clicked.disconnect(self.selectBlock)
                     self.ChessBoard_unit[i][j].clicked.connect(self.selectChess)
-        self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'EMPTY.png')))
+        # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+        self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon('EMPTY.png'))
         if self.turn_player == 1:
-            self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'BLACK.png')))
+            # self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+            self.ChessBoard_unit[x][y].setIcon(QIcon('BLACK.png'))
         else:
-            self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'WHITE.png')))
+            # self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
+            self.ChessBoard_unit[x][y].setIcon(QIcon('WHITE.png'))
         self.ex = x
         self.ey = y
         for dir in range(8):
@@ -217,7 +244,8 @@ class GameWindow(QWidget):
                 self.ChessBoard_unit[nx][ny].clicked.disconnect(self.selectChess)
                 self.ChessBoard_unit[nx][ny].clicked.connect(self.procMove)
                 self.ChessBoard_unit_content[nx][ny] = -19260817 # 被标记为红色的可以放障碍物的格子
-                self.ChessBoard_unit[nx][ny].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'CANBLOCK.png')))
+                # self.ChessBoard_unit[nx][ny].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'CANBLOCK.png')))
+                self.ChessBoard_unit[nx][ny].setIcon(QIcon('CANBLOCK.png'))
                 nx += self.dx[dir]
                 ny += self.dy[dir]
 
@@ -232,20 +260,25 @@ class GameWindow(QWidget):
                     y = j
                 if self.ChessBoard_unit_content[i][j] == -19260817: # 恢复
                     self.ChessBoard_unit_content[i][j] = 0
-                    self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'EMPTY.png')))
+                    # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+                    self.ChessBoard_unit[i][j].setIcon(QIcon('EMPTY.png'))
                     self.ChessBoard_unit[i][j].clicked.disconnect(self.procMove)
                     self.ChessBoard_unit[i][j].clicked.connect(self.selectChess)
         self.bx = x
         self.by = y
         self.ChessBoard_unit_content[self.ox][self.oy] = 0
-        self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'EMPTY.png')))
+        # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+        self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon('EMPTY.png'))
         self.ChessBoard_unit_content[self.ex][self.ey] = self.turn_player
         if self.turn_player == 1:
-            self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'BLACK.png')))
+            # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+            self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon('BLACK.png'))
         else:
-            self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'WHITE.png')))
+            # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
+            self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon('WHITE.png'))
         self.ChessBoard_unit_content[self.bx][self.by] = -1
-        self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'BLOCK.png')))
+        # self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLOCK.png')))
+        self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon('BLOCK.png'))
         self.selectChessFlag = False
         for i in range(4):
             if self.chess[self.turn_player][i] == self.ox * 10 + self.oy: # 找到被移动的棋
@@ -312,14 +345,18 @@ class GameWindow(QWidget):
         self.canRegret = False
         self.turn_player = 3 - self.turn_player
         self.ChessBoard_unit_content[self.ex][self.ey] = 0
-        self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'EMPTY.png')))
+        # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+        self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon('EMPTY.png'))
         self.ChessBoard_unit_content[self.bx][self.by] = 0
-        self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'EMPTY.png')))
+        # self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+        self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon('EMPTY.png'))
         self.ChessBoard_unit_content[self.ox][self.oy] = self.turn_player
         if self.turn_player == 1:
-            self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'BLACK.png')))
+            # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+            self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon('BLACK.png'))
         else:
-            self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'source', 'WHITE.png')))
+            # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
+            self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon('WHITE.png'))
         for i in range(4):
             if self.chess[self.turn_player][i] == self.ex * 10 + self.ey: # 找到被移动的棋
                 self.chess[self.turn_player][i] = self.ox * 10 + self.oy
@@ -329,12 +366,12 @@ class GameWindow(QWidget):
         os.system('bot.exe')
 
     def initLog(self): # 从零开始游戏
-        f = open(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'data', 'moves.amazons'), 'w')
+        f = open(os.path.join(os.path.abspath('.'), 'data', 'moves.amazons'), 'w')
         f.write("1 -1 -1 -1 -1 -1 -1")
         f.close()
 
     def readLog(self): # 读档 
-        f = open(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'data', 'chessboard.amazons'), "r")
+        f = open(os.path.join(os.path.abspath('.'), 'data', 'chessboard.amazons'), "r")
         rownum = 0
         for line in f:
             items = line.split() # 以空格分割
@@ -347,7 +384,7 @@ class GameWindow(QWidget):
         f.close()
 
     def saveLog(self): # 存档
-        f = open(os.path.join(r'C:\Users\Konja\Documents\GitHub\Amazons-Chess', 'data', 'moves.amazons'), 'w')
+        f = open(os.path.join(os.path.abspath('.'), 'data', 'moves.amazons'), 'w')
         f.close()
 
     def hint(self): # 提示
@@ -357,7 +394,36 @@ class GameWindow(QWidget):
         pass
 
 if __name__ == '__main__':
+    get_pic(background_jpg, 'background.jpg')
+    get_pic(ICON_ico, 'ICON.ico')
+    get_pic(EMPTY_png, 'EMPTY.png')
+    get_pic(BLACK_png, 'BLACK.png')
+    get_pic(WHITE_png, 'WHITE.png')
+    get_pic(BLOCK_png, 'BLOCK.png')
+    get_pic(CANGO_png, 'CANGO.png')
+    get_pic(CANBLOCK_png, 'CANBLOCK.png')
+    get_pic(HINT_png, 'HINT.png')
+    get_pic(REDO_png, 'REDO.png')
+    get_pic(READ_png, 'READ.png')
+    get_pic(SAVE_png, 'SAVE.png')
+    get_pic(SKIN_png, 'SKIN.png')
+    get_pic(NEWGAME_png, 'NEWGAME.png')
     app = QApplication(sys.argv)
     gamewindow = GameWindow()
     gamewindow.show()
-    sys.exit(app.exec_())
+    app.exec_()
+    os.remove('background.jpg')
+    os.remove('ICON.ico')
+    os.remove('EMPTY.png')
+    os.remove('BLACK.png')
+    os.remove('WHITE.png')
+    os.remove('BLOCK.png')
+    os.remove('CANGO.png')
+    os.remove('CANBLOCK.png')
+    os.remove('HINT.png')
+    os.remove('REDO.png')
+    os.remove('READ.png')
+    os.remove('SAVE.png')
+    os.remove('SKIN.png')
+    os.remove('NEWGAME.png')
+    sys.exit()

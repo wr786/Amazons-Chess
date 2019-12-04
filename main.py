@@ -67,6 +67,7 @@ class GameWindow(QWidget):
         self.Save_button = QPushButton(self)
         self.Read_button = QPushButton(self)
         self.Skin_button = QPushButton(self)
+        self.NewGame_button = QPushButton(self)
 
         self.Redo_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'REDO.png')))
         self.Redo_button.setIconSize(QSize(80,80))
@@ -78,12 +79,15 @@ class GameWindow(QWidget):
         self.Read_button.setIconSize(QSize(80,80))
         self.Skin_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'SKIN.png')))
         self.Skin_button.setIconSize(QSize(80,80))
+        self.NewGame_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'NEWGAME.png')))
+        self.NewGame_button.setIconSize(QSize(80,80))
 
         self.Redo_button.setText("悔棋")
         self.Hint_button.setText("提示")
         self.Save_button.setText("存档")
         self.Read_button.setText("读档")
         self.Skin_button.setText("换肤")
+        self.NewGame_button.setText("新游戏")
 
         self.Redo_button.setStyleSheet( "QPushButton{color:black}"
                               "QPushButton{background-color:white}"
@@ -115,18 +119,26 @@ class GameWindow(QWidget):
                               "QPushButton{padding:20px 40px}"
                               "QPushButton{font-size: 48px}"
                               "QPushButton{font-family:'Microsoft YaHei'}")
+        self.NewGame_button.setStyleSheet( "QPushButton{color:black}"
+                              "QPushButton{background-color:white}"
+                              "QPushButton{border:2px}"
+                              "QPushButton{padding:20px 40px}"
+                              "QPushButton{font-size: 36px}"
+                              "QPushButton{font-family:'Microsoft YaHei'}")
 
-        self.Redo_button.setGeometry(1260, 150, 280, 100)
-        self.Hint_button.setGeometry(1260, 300, 280, 100)
-        self.Save_button.setGeometry(1260, 450, 280, 100)
-        self.Read_button.setGeometry(1260, 600, 280, 100)
-        self.Skin_button.setGeometry(1260, 750, 280, 100)
+        self.Redo_button.setGeometry(1260, 130, 280, 100)
+        self.Hint_button.setGeometry(1260, 280, 280, 100)
+        self.Save_button.setGeometry(1260, 430, 280, 100)
+        self.Read_button.setGeometry(1260, 580, 280, 100)
+        self.Skin_button.setGeometry(1260, 730, 280, 100)
+        self.NewGame_button.setGeometry(1260, 880, 280, 100)
 
         self.Redo_button.clicked.connect(self.regret)
         self.Hint_button.clicked.connect(self.hint)
         self.Save_button.clicked.connect(self.saveLog)
         self.Read_button.clicked.connect(self.readLog)
         self.Skin_button.clicked.connect(self.changeSkin)
+        self.NewGame_button.clicked.connect(self.newGame)
 
     def showChess(self):
         for i in range(8):
@@ -268,6 +280,26 @@ class GameWindow(QWidget):
             QMessageBox.information(self,"游戏结束","白方获胜！",QMessageBox.Ok)
         elif(locked[2][4]):
             QMessageBox.information(self,"游戏结束","黑方获胜！",QMessageBox.Ok)
+
+    def newGame(self): # 是新游戏
+        for i in range(8):
+            for j in range(8):
+                self.ChessBoard_unit_content[i][j] = 0 # 归 零
+        # init初始坐标
+        # 这里的坐标都是转置过的，后续坐标也要记得转置……
+        self.ChessBoard_unit_content[0][2] = 1
+        self.ChessBoard_unit_content[2][0] = 1
+        self.ChessBoard_unit_content[5][0] = 1
+        self.ChessBoard_unit_content[7][2] = 1
+        self.ChessBoard_unit_content[0][5] = 2
+        self.ChessBoard_unit_content[2][7] = 2
+        self.ChessBoard_unit_content[5][7] = 2
+        self.ChessBoard_unit_content[7][5] = 2
+        self.selectChessFlag = False
+        self.turn_player = 1
+        self.chess = [[0, 0, 0, 0], [2, 20, 50, 72], [5, 27, 57, 75]] # 记录棋子的位置
+
+        self.showChess()
     # <----------------------------------------待施工------------------------------------>
     def calc(self):
         os.system('bot.exe')

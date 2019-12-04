@@ -4,6 +4,11 @@ from PyQt5.QtGui import QIcon, QPalette, QBrush, QPixmap
 from PyQt5.QtCore import pyqtSignal, QSize, QTimer
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout, QPushButton, QVBoxLayout
 
+def inBoard(x, y):
+    if(x < 0 or x >= 8 or y < 0 or y >= 8):
+        return False
+    return True
+
 class GameWindow(QWidget):
     
     def __init__(self):
@@ -38,7 +43,9 @@ class GameWindow(QWidget):
                 self.ChessBoard_unit[i][j].setGeometry(250 + 100*(i-1), 250 + 100*(j-1), 100, 100)
                 self.ChessBoard_unit[i][j].setIconSize(QSize(110,110))
                 self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+                self.ChessBoard_unit[i][j].clicked.connect(self.selectChess)
                 # self.ChessBoard_unit[i][j].clicked.connect(self.test)
+        # init初始坐标
         # 这里的坐标都是转置过的，后续坐标也要记得转置……
         self.ChessBoard_unit_content[0][2] = 1
         self.ChessBoard_unit_content[2][0] = 1
@@ -48,6 +55,11 @@ class GameWindow(QWidget):
         self.ChessBoard_unit_content[2][7] = 2
         self.ChessBoard_unit_content[5][7] = 2
         self.ChessBoard_unit_content[7][5] = 2
+        self.dx = [0, 1, 1, 1, 0, -1, -1, -1]
+        self.dy = [1, 1, 0, -1, -1, -1, 0, 1]
+        self.selectChessFlag = False
+        self.selectBlockFlag = False
+        self.turn_player = 1
 
 
     def init_buttons(self):
@@ -70,8 +82,8 @@ class GameWindow(QWidget):
 
         self.Redo_button.setText("悔棋")
         self.Hint_button.setText("提示")
-        self.Save_button.setText("读档")
-        self.Read_button.setText("存档")
+        self.Save_button.setText("存档")
+        self.Read_button.setText("读档")
         self.Skin_button.setText("换肤")
 
         self.Redo_button.setStyleSheet( "QPushButton{color:black}"
@@ -132,10 +144,79 @@ class GameWindow(QWidget):
         # sender = self.sender() # 用sender来获取发送者
         # sender.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
 
+    # <----------------------------------------测试区------------------------------------>
+
+    def selectChess(self):
+        # 此处应有判断是否为自己的棋子
+        if self.selectChessFlag: # 此处应有弹出提示框
+            pass
+        self.selectChessFlag = True
+        sender = self.sender()
+        x = -1
+        y = -1
+        for i in range(8):
+            for j in range(8):
+                if self.ChessBoard_unit[i][j] == sender:
+                    x = i
+                    y = j
+                    break        
+            if x != -1:
+                break
+        self.ox = x
+        self.oy = y
+        for dir in range(8):
+            nx = x + self.dx[dir]
+            ny = y + self.dy[dir]
+            while(inBoard(nx, ny) and self.ChessBoard_unit_content[nx][ny] == 0):
+                self.ChessBoard_unit[nx][ny].clicked.disconnect(self.selectChess)
+                self.ChessBoard_unit[nx][ny].clicked.connect(self.selectBlock)
+                self.ChessBoard_unit_content[nx][ny] = 19260817 # 被标记为黄色的可以去往的格子
+                self.ChessBoard_unit[nx][ny].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'CANGO.png')))
+                nx += self.dx[dir]
+                ny += self.dy[dir]
+
+    def selectBlock(self):
+        if self.selectBlockFlag: # 此处应有弹出提示框
+            pass
+        self.selectBlockFlag = True
+        sender = self.sender()
+        x = -1
+        y = -1
+        for i in range(8):
+            for j in range(8):
+                if self.ChessBoard_unit[i][j] == sender:
+                    x = i
+                    y = j
+                if self.ChessBoard_unit_content[i][j] == 19260817: # 恢复
+                    self.ChessBoard_unit_content[i][j] = 0
+                    self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+                    self.ChessBoard_unit[i][j].clicked.disconnect(self.selectBlock)
+                    self.ChessBoard_unit[i][j].clicked.connect(self.selectChess)
+        self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+        if self.turn_player == 1:
+            self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+        else:
+            self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+        for dir in range(8):
+            nx = x + self.dx[dir]
+            ny = y + self.dy[dir]
+            while(inBoard(nx, ny) and (self.ChessBoard_unit_content[nx][ny] == 0 or (nx == self.ox and ny == self.oy))):
+                self.ChessBoard_unit[nx][ny].clicked.disconnect(self.selectChess)
+                self.ChessBoard_unit[nx][ny].clicked.connect(self.procMove)
+                self.ex = x
+                self.ey = y
+                self.bx = nx
+                self.by = ny
+                self.ChessBoard_unit_content[nx][ny] = -19260817 # 被标记为红色的可以放障碍物的格子
+                self.ChessBoard_unit[nx][ny].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'CANBLOCK.png')))
+                nx += self.dx[dir]
+                ny += self.dy[dir]
+
+    def procMove(self):
+        pass
+
     def calc(self):
         os.system('bot.exe')
-
-    # <----------------------------------------测试区------------------------------------>
 
     def initLog(self): # 从零开始游戏
         f = open(os.path.join(os.path.abspath('.'), 'data', 'moves.amazons'), 'w')

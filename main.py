@@ -317,6 +317,9 @@ class GameWindow(QWidget):
             QMessageBox.information(self,"游戏结束","黑方获胜！",QMessageBox.Ok)
 
     def newGame(self): # 是新游戏
+        if self.selectChessFlag:
+            QMessageBox.critical(self,"不要脚踏两条船！","请先完成移动操作！",QMessageBox.Ok)
+            return
         # 此处应有询问是否需要人机对战
         for i in range(8):
             for j in range(8):
@@ -338,12 +341,16 @@ class GameWindow(QWidget):
 
         self.showChess()
 
-    def regret(self): # 悔棋
+    def regret(self): # 悔棋     
+        if self.selectChessFlag:
+            QMessageBox.critical(self,"不要脚踏两条船！","请先完成移动操作！",QMessageBox.Ok)
+            return
         if not self.canRegret:
             QMessageBox.critical(self,"约束！","恁现在不能悔棋！",QMessageBox.Ok)
             return
         self.canRegret = False
         self.turn_player = 3 - self.turn_player
+        self.selectChessFlag = False
         self.ChessBoard_unit_content[self.ex][self.ey] = 0
         # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
         self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon('EMPTY.png'))

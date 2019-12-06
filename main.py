@@ -74,12 +74,14 @@ class GameWindow(QWidget):
         self.chess = [[0, 0, 0, 0], [2, 20, 50, 72], [5, 27, 57, 75]] # 记录棋子的位置
         # self.canRegret = False
         self.turns = 1
-        self.ox = {}
-        self.oy = {}
-        self.ex = {}
-        self.ey = {}
-        self.bx = {}
-        self.by = {}
+        # 初始化第0组数据为-1 -1 -1 -1 -1 -1
+        self.ox = {0:-1} 
+        self.oy = {0:-1}
+        self.ex = {0:-1}
+        self.ey = {0:-1}
+        self.bx = {0:-1}
+        self.by = {0:-1}
+        self.freeMove = False
 
     def init_buttons(self):
         self.Redo_button = QPushButton(self)
@@ -257,22 +259,23 @@ class GameWindow(QWidget):
                 ny += self.dy[dir]
 
     def procMove(self):
-        sender = self.sender()
-        x = -1
-        y = -1
-        for i in range(8):
-            for j in range(8):
-                if self.ChessBoard_unit[i][j] == sender:
-                    x = i
-                    y = j
-                if self.ChessBoard_unit_content[i][j] == -19260817: # 恢复
-                    self.ChessBoard_unit_content[i][j] = 0
-                    # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-                    self.ChessBoard_unit[i][j].setIcon(QIcon('EMPTY.png'))
-                    self.ChessBoard_unit[i][j].clicked.disconnect(self.procMove)
-                    self.ChessBoard_unit[i][j].clicked.connect(self.selectChess)
-        self.bx[self.turns] = x
-        self.by[self.turns] = y
+        if not self.freeMove: # 为了判断是不是读档等时调用ProcMove
+            sender = self.sender()
+            x = -1
+            y = -1
+            for i in range(8):
+                for j in range(8):
+                    if self.ChessBoard_unit[i][j] == sender:
+                        x = i
+                        y = j
+                    if self.ChessBoard_unit_content[i][j] == -19260817: # 恢复
+                        self.ChessBoard_unit_content[i][j] = 0
+                        # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+                        self.ChessBoard_unit[i][j].setIcon(QIcon('EMPTY.png'))
+                        self.ChessBoard_unit[i][j].clicked.disconnect(self.procMove)
+                        self.ChessBoard_unit[i][j].clicked.connect(self.selectChess)
+            self.bx[self.turns] = x
+            self.by[self.turns] = y
         self.ChessBoard_unit_content[self.ox[self.turns]][self.oy[self.turns]] = 0
         # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
         self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('EMPTY.png'))
@@ -347,6 +350,7 @@ class GameWindow(QWidget):
         self.chess = [[0, 0, 0, 0], [2, 20, 50, 72], [5, 27, 57, 75]] # 记录棋子的位置
         # self.canRegret = False
         self.turns = 1
+        self.freeMove = False
 
         self.showChess()
 
@@ -378,31 +382,53 @@ class GameWindow(QWidget):
             if self.chess[self.turn_player][i] == self.ex[self.turns] * 10 + self.ey[self.turns]: # 找到被移动的棋
                 self.chess[self.turn_player][i] = self.ox[self.turns] * 10 + self.oy[self.turns]
                 break
+
+    def saveLog(self): # 存档
+        f = open(os.path.join(os.path.abspath('.'), 'data', 'archive.amazons'), 'w')
+        f.write(str((self.turns+1)//2)) # 回合数，不用加一因为在ProcMove之后已经将回合数进行了加一
+        f.write('\n')
+        if self.turn_player == 1: # 下步为黑方行动
+            for i in range(self.turns): # 从-1-1-1-1-1-1开始，输出self.turns行move
+                f.write("{} {} {} {} {} {}\n".format(self.ox[i], self.oy[i], self.ex[i], self.ey[i], self.bx[i], self.by[i]))
+        else: # 下步为白方行动
+            for i in range(self.turns-1):
+                f.write("{} {} {} {} {} {}\n".format(self.ox[i+1], self.oy[i+1], self.ex[i+1], self.ey[i+1], self.bx[i+1], self.by[i+1]))
+        f.close()
     # <----------------------------------------待施工------------------------------------>
     def calc(self):
         os.system('bot.exe')
 
-    def initLog(self): # 从零开始游戏
-        f = open(os.path.join(os.path.abspath('.'), 'data', 'moves.amazons'), 'w')
-        f.write("1 -1 -1 -1 -1 -1 -1")
+    def readLog(self): # 读档
+        self.newGame() # 将棋盘重置 
+        self.freeMove = True
+        f = open(os.path.join(os.path.abspath('.'), 'data', 'archive.amazons'), "r")
+        my_turn = int(f.readline())
+        # 特殊处理第一行
+        (orix, oriy, endx, endy, blkx, blky) = f.readline().split(" ")
+        # print("{} {} {} {} {} {}".format(orix, oriy, endx, endy, int(blkx), int(blky)))
+        if orix == "-1": # 本回合为黑方
+            self.turn_player = 1
+        else: # 本回合为白方
+            self.turn_player = 1
+            self.ox[self.turns] = int(orix)
+            self.oy[self.turns] = int(oriy)
+            self.ex[self.turns] = int(endx)
+            self.ey[self.turns] = int(endy)
+            self.bx[self.turns] = int(blkx)
+            self.by[self.turns] = int(blky)
+            self.procMove()
+        for i in range((2*my_turn-1) - 1):
+            (orix, oriy, endx, endy, blkx, blky) = f.readline().split(" ")
+            self.ox[self.turns] = int(orix)
+            self.oy[self.turns] = int(oriy)
+            self.ex[self.turns] = int(endx)
+            self.ey[self.turns] = int(endy)
+            self.bx[self.turns] = int(blkx)
+            self.by[self.turns] = int(blky)
+            self.procMove()
+            # print("{} {} {} {} {} {}".format(orix, oriy, endx, endy, blkx, blky))
         f.close()
-
-    def readLog(self): # 读档 
-        f = open(os.path.join(os.path.abspath('.'), 'data', 'chessboard.amazons'), "r")
-        rownum = 0
-        for line in f:
-            items = line.split() # 以空格分割
-            colnum = 0
-            for item in items:
-                chesstype = int(item)
-                self.showChess(self, rownum, colnum, chesstype)
-                colnum += 1
-            rownum += 1
-        f.close()
-
-    def saveLog(self): # 存档
-        f = open(os.path.join(os.path.abspath('.'), 'data', 'moves.amazons'), 'w')
-        f.close()
+        self.freeMove = False
 
     def hint(self): # 提示
         pass

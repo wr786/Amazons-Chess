@@ -36,11 +36,17 @@ class GameWindow(QWidget):
         # palette1.setBrush(self.backgroundRole(), QBrush(QPixmap(os.path.join(os.path.abspath('.'), 'source', 'background.jpg'))))
         palette1.setBrush(self.backgroundRole(), QBrush(QPixmap('background.jpg')))
         self.setPalette(palette1)
-        
         self.showChess()
         # self.readLog()
 
     def init_chess_board(self):
+        self.turn_logger = QLabel(self)
+        self.turn_logger.setGeometry(150, 100, 350, 50)
+        self.turn_logger.setStyleSheet("QLabel{color:black}"
+                                  "QLabel{background-color:white}"
+                                  "QLabel{border:2px}"
+                                  "QLabel{padding:0px 0px}"
+                                  "QLabel{font-family:'Microsoft YaHei'}")
         self.ChessBoard_unit = [[0] * 8 for _ in range(8)] # 生成ChessBoard单元 8×8
         self.ChessBoard_unit_content = [[0] * 8 for _ in range(8)]
         for i in range(8):
@@ -82,6 +88,10 @@ class GameWindow(QWidget):
         self.bx = {0:-1}
         self.by = {0:-1}
         self.freeMove = False
+        if self.turn_player == 1:
+            self.turn_logger.setText("当前回合：{} | 当前行动方：黑方".format(self.turns))
+        else:
+            self.turn_logger.setText("当前回合：{} | 当前行动方：白方".format(self.turns))
 
     def init_buttons(self):
         self.Redo_button = QPushButton(self)
@@ -298,6 +308,10 @@ class GameWindow(QWidget):
         self.judgeWin()
         # self.canRegret = True
         self.turns += 1
+        if self.turn_player == 1:
+            self.turn_logger.setText("当前回合：{} | 当前行动方：黑方".format(self.turns))
+        else:
+            self.turn_logger.setText("当前回合：{} | 当前行动方：白方".format(self.turns))
 
     def canMove(self, x, y):
         for dir in range(8):
@@ -351,7 +365,10 @@ class GameWindow(QWidget):
         # self.canRegret = False
         self.turns = 1
         self.freeMove = False
-
+        if self.turn_player == 1:
+            self.turn_logger.setText("当前回合：{} | 当前行动方：黑方".format(self.turns))
+        else:
+            self.turn_logger.setText("当前回合：{} | 当前行动方：白方".format(self.turns))
         self.showChess()
 
     def regret(self): # 悔棋     
@@ -382,6 +399,10 @@ class GameWindow(QWidget):
             if self.chess[self.turn_player][i] == self.ex[self.turns] * 10 + self.ey[self.turns]: # 找到被移动的棋
                 self.chess[self.turn_player][i] = self.ox[self.turns] * 10 + self.oy[self.turns]
                 break
+        if self.turn_player == 1:
+            self.turn_logger.setText("当前回合：{}　|　当前行动方：黑方".format(self.turns))
+        else:
+            self.turn_logger.setText("当前回合：{}　|　当前行动方：白方".format(self.turns))
 
     def saveLog(self): # 存档
         f = open(os.path.join(os.path.abspath('.'), 'data', 'archive.amazons'), 'w')
@@ -394,9 +415,6 @@ class GameWindow(QWidget):
             for i in range(self.turns-1):
                 f.write("{} {} {} {} {} {}\n".format(self.ox[i+1], self.oy[i+1], self.ex[i+1], self.ey[i+1], self.bx[i+1], self.by[i+1]))
         f.close()
-    # <----------------------------------------待施工------------------------------------>
-    def calc(self):
-        os.system('bot.exe')
 
     def readLog(self): # 读档
         self.newGame() # 将棋盘重置 
@@ -429,6 +447,9 @@ class GameWindow(QWidget):
             # print("{} {} {} {} {} {}".format(orix, oriy, endx, endy, blkx, blky))
         f.close()
         self.freeMove = False
+    # <----------------------------------------待施工------------------------------------>
+    def calc(self):
+        os.system('bot.exe')
 
     def hint(self): # 提示
         pass

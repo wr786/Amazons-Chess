@@ -72,7 +72,14 @@ class GameWindow(QWidget):
         self.selectChessFlag = False
         self.turn_player = 1
         self.chess = [[0, 0, 0, 0], [2, 20, 50, 72], [5, 27, 57, 75]] # 记录棋子的位置
-        self.canRegret = False
+        # self.canRegret = False
+        self.turns = 1
+        self.ox = {}
+        self.oy = {}
+        self.ex = {}
+        self.ey = {}
+        self.bx = {}
+        self.by = {}
 
     def init_buttons(self):
         self.Redo_button = QPushButton(self)
@@ -197,8 +204,8 @@ class GameWindow(QWidget):
         if self.ChessBoard_unit_content[x][y] != self.turn_player:
             QMessageBox.critical(self,"这不是恁的棋子！","这不是恁的棋子，请选择恁的棋子！",QMessageBox.Ok)
             return
-        self.ox = x
-        self.oy = y
+        self.ox[self.turns] = x
+        self.oy[self.turns] = y
         self.selectChessFlag = True
         for dir in range(8):
             nx = x + self.dx[dir]
@@ -228,19 +235,19 @@ class GameWindow(QWidget):
                     self.ChessBoard_unit[i][j].clicked.disconnect(self.selectBlock)
                     self.ChessBoard_unit[i][j].clicked.connect(self.selectChess)
         # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-        self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon('EMPTY.png'))
+        self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('EMPTY.png'))
         if self.turn_player == 1:
             # self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
             self.ChessBoard_unit[x][y].setIcon(QIcon('BLACK.png'))
         else:
             # self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
             self.ChessBoard_unit[x][y].setIcon(QIcon('WHITE.png'))
-        self.ex = x
-        self.ey = y
+        self.ex[self.turns] = x
+        self.ey[self.turns] = y
         for dir in range(8):
             nx = x + self.dx[dir]
             ny = y + self.dy[dir]
-            while(inBoard(nx, ny) and (self.ChessBoard_unit_content[nx][ny] == 0 or (nx == self.ox and ny == self.oy))):
+            while(inBoard(nx, ny) and (self.ChessBoard_unit_content[nx][ny] == 0 or (nx == self.ox[self.turns] and ny == self.oy[self.turns]))):
                 self.ChessBoard_unit[nx][ny].clicked.disconnect(self.selectChess)
                 self.ChessBoard_unit[nx][ny].clicked.connect(self.procMove)
                 self.ChessBoard_unit_content[nx][ny] = -19260817 # 被标记为红色的可以放障碍物的格子
@@ -264,29 +271,30 @@ class GameWindow(QWidget):
                     self.ChessBoard_unit[i][j].setIcon(QIcon('EMPTY.png'))
                     self.ChessBoard_unit[i][j].clicked.disconnect(self.procMove)
                     self.ChessBoard_unit[i][j].clicked.connect(self.selectChess)
-        self.bx = x
-        self.by = y
-        self.ChessBoard_unit_content[self.ox][self.oy] = 0
+        self.bx[self.turns] = x
+        self.by[self.turns] = y
+        self.ChessBoard_unit_content[self.ox[self.turns]][self.oy[self.turns]] = 0
         # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-        self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon('EMPTY.png'))
-        self.ChessBoard_unit_content[self.ex][self.ey] = self.turn_player
+        self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('EMPTY.png'))
+        self.ChessBoard_unit_content[self.ex[self.turns]][self.ey[self.turns]] = self.turn_player
         if self.turn_player == 1:
             # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
-            self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon('BLACK.png'))
+            self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('BLACK.png'))
         else:
             # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
-            self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon('WHITE.png'))
-        self.ChessBoard_unit_content[self.bx][self.by] = -1
+            self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('WHITE.png'))
+        self.ChessBoard_unit_content[self.bx[self.turns]][self.by[self.turns]] = -1
         # self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLOCK.png')))
-        self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon('BLOCK.png'))
+        self.ChessBoard_unit[self.bx[self.turns]][self.by[self.turns]].setIcon(QIcon('BLOCK.png'))
         self.selectChessFlag = False
         for i in range(4):
-            if self.chess[self.turn_player][i] == self.ox * 10 + self.oy: # 找到被移动的棋
-                self.chess[self.turn_player][i] = self.ex * 10 + self.ey
+            if self.chess[self.turn_player][i] == self.ox[self.turns] * 10 + self.oy[self.turns]: # 找到被移动的棋
+                self.chess[self.turn_player][i] = self.ex[self.turns] * 10 + self.ey[self.turns]
                 break
         self.turn_player = 3 - self.turn_player
         self.judgeWin()
-        self.canRegret = True
+        # self.canRegret = True
+        self.turns += 1
 
     def canMove(self, x, y):
         for dir in range(8):
@@ -337,7 +345,8 @@ class GameWindow(QWidget):
         self.selectChessFlag = False
         self.turn_player = 1
         self.chess = [[0, 0, 0, 0], [2, 20, 50, 72], [5, 27, 57, 75]] # 记录棋子的位置
-        self.canRegret = False
+        # self.canRegret = False
+        self.turns = 1
 
         self.showChess()
 
@@ -345,28 +354,29 @@ class GameWindow(QWidget):
         if self.selectChessFlag:
             QMessageBox.critical(self,"不要脚踏两条船！","请先完成移动操作！",QMessageBox.Ok)
             return
-        if not self.canRegret:
+        if self.turns == 1: # 回到初始局面了
             QMessageBox.critical(self,"约束！","恁现在不能悔棋！",QMessageBox.Ok)
             return
-        self.canRegret = False
+        self.turns -= 1
+        # self.canRegret = False
         self.turn_player = 3 - self.turn_player
         self.selectChessFlag = False
-        self.ChessBoard_unit_content[self.ex][self.ey] = 0
+        self.ChessBoard_unit_content[self.ex[self.turns]][self.ey[self.turns]] = 0
         # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-        self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon('EMPTY.png'))
-        self.ChessBoard_unit_content[self.bx][self.by] = 0
+        self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('EMPTY.png'))
+        self.ChessBoard_unit_content[self.bx[self.turns]][self.by[self.turns]] = 0
         # self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-        self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon('EMPTY.png'))
-        self.ChessBoard_unit_content[self.ox][self.oy] = self.turn_player
+        self.ChessBoard_unit[self.bx[self.turns]][self.by[self.turns]].setIcon(QIcon('EMPTY.png'))
+        self.ChessBoard_unit_content[self.ox[self.turns]][self.oy[self.turns]] = self.turn_player
         if self.turn_player == 1:
             # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
-            self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon('BLACK.png'))
+            self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('BLACK.png'))
         else:
             # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
-            self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon('WHITE.png'))
+            self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('WHITE.png'))
         for i in range(4):
-            if self.chess[self.turn_player][i] == self.ex * 10 + self.ey: # 找到被移动的棋
-                self.chess[self.turn_player][i] = self.ox * 10 + self.oy
+            if self.chess[self.turn_player][i] == self.ex[self.turns] * 10 + self.ey[self.turns]: # 找到被移动的棋
+                self.chess[self.turn_player][i] = self.ox[self.turns] * 10 + self.oy[self.turns]
                 break
     # <----------------------------------------待施工------------------------------------>
     def calc(self):

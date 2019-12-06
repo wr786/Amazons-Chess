@@ -92,6 +92,7 @@ class GameWindow(QWidget):
             self.turn_logger.setText("当前回合：{} | 当前行动方：黑方".format(self.turns))
         else:
             self.turn_logger.setText("当前回合：{} | 当前行动方：白方".format(self.turns))
+        self.AIMode = 0
 
     def init_buttons(self):
         self.Redo_button = QPushButton(self)
@@ -121,7 +122,7 @@ class GameWindow(QWidget):
         self.NewGame_button.setIconSize(QSize(80,80))
 
         self.Redo_button.setText("悔棋")
-        self.Hint_button.setText("提示")
+        self.Hint_button.setText("人机")
         self.Save_button.setText("存档")
         self.Read_button.setText("读档")
         self.Skin_button.setText("换肤")
@@ -312,6 +313,8 @@ class GameWindow(QWidget):
             self.turn_logger.setText("当前回合：{} | 当前行动方：黑方".format(self.turns))
         else:
             self.turn_logger.setText("当前回合：{} | 当前行动方：白方".format(self.turns))
+        if not self.freeMove and self.AIMode == self.turn_player:
+            self.AIMove()
 
     def canMove(self, x, y):
         for dir in range(8):
@@ -370,6 +373,7 @@ class GameWindow(QWidget):
         else:
             self.turn_logger.setText("当前回合：{} | 当前行动方：白方".format(self.turns))
         self.showChess()
+        self.AIMode = 0
 
     def regret(self): # 悔棋     
         if self.selectChessFlag:
@@ -448,11 +452,60 @@ class GameWindow(QWidget):
         f.close()
         self.freeMove = False
     # <----------------------------------------待施工------------------------------------>
-    def calc(self):
+    def AIMove(self): # 待补足
+        # 写入AI文件
+        f = open(os.path.join(os.path.abspath('.'), 'data', 'AI.amazons'), 'w')
+        f.write(str((self.turns+1)//2)) # 回合数，不用加一因为在ProcMove之后已经将回合数进行了加一
+        f.write('\n')
+        if self.turn_player == 1: # 下步为黑方行动
+            for i in range(self.turns): # 从-1-1-1-1-1-1开始，输出self.turns行move
+                f.write("{} {} {} {} {} {}\n".format(self.ox[i], self.oy[i], self.ex[i], self.ey[i], self.bx[i], self.by[i]))
+        else: # 下步为白方行动
+            for i in range(self.turns-1):
+                f.write("{} {} {} {} {} {}\n".format(self.ox[i+1], self.oy[i+1], self.ex[i+1], self.ey[i+1], self.bx[i+1], self.by[i+1]))
+        f.close()
+        # 运行AI
         os.system('bot.exe')
+        tmp = self.AIMode
+        # 读入AI文件
+        self.newGame() # 将棋盘重置 
+        self.AIMode = tmp # 复原AIMode
+        self.freeMove = True
+        f = open(os.path.join(os.path.abspath('.'), 'data', 'AI.amazons'), "r")
+        my_turn = int(f.readline())
+        # 特殊处理第一行
+        (orix, oriy, endx, endy, blkx, blky) = f.readline().split(" ")
+        # print("{} {} {} {} {} {}".format(orix, oriy, endx, endy, int(blkx), int(blky)))
+        if orix == "-1": # 本回合为黑方
+            self.turn_player = 1
+        else: # 本回合为白方
+            self.turn_player = 1
+            self.ox[self.turns] = int(orix)
+            self.oy[self.turns] = int(oriy)
+            self.ex[self.turns] = int(endx)
+            self.ey[self.turns] = int(endy)
+            self.bx[self.turns] = int(blkx)
+            self.by[self.turns] = int(blky)
+            self.procMove()
+        for i in range((2*my_turn-1) - 1):
+            (orix, oriy, endx, endy, blkx, blky) = f.readline().split(" ")
+            self.ox[self.turns] = int(orix)
+            self.oy[self.turns] = int(oriy)
+            self.ex[self.turns] = int(endx)
+            self.ey[self.turns] = int(endy)
+            self.bx[self.turns] = int(blkx)
+            self.by[self.turns] = int(blky)
+            self.procMove()
+            # print("{} {} {} {} {} {}".format(orix, oriy, endx, endy, blkx, blky))
+        f.close()
+        self.freeMove = False
 
-    def hint(self): # 提示
-        pass
+    def hint(self): # 暂时改为人机对战
+        if self.AIMode == 0:
+            self.AIMode = self.turn_player
+            self.AIMove()
+        else:
+            QMessageBox.critical(self,"打则死路一条！","恁已经处于人机对战模式！",QMessageBox.Ok)
 
     def changeSkin(self): # 换肤
         pass

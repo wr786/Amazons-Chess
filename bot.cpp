@@ -623,34 +623,41 @@ inline int read() {
 }
 
 int main() {
-	freopen(".\\data\\moves.amazons", "r", stdin);
-	freopen(".\\data\\chessboard.amazons", "w", stdout);
-
+	freopen(".\\data\\AI.amazons", "r", stdin);
+	freopen(".\\data\\AI.amazons", "w", stdout);
     ChessBoard Board;
     Board.Reset();
     int turn_num; 
+    bool AIModeflag = false;
     // cin >> turn_num;
     // scanf("%d", &turn_num);
     turn_num = read();
+    // printf("%d\n", turn_num+1);
     int x_start, y_start, x_final, y_final, x_block, y_block;
     x_start = read(), y_start = read(), x_final = read(), y_final= read(), x_block = read(), y_block = read();
+    printf("%d %d %d %d %d %d\n", x_start, y_start, x_final, y_final, x_block, y_block);
     // scanf("%d%d%d%d%d%d", &x_start, &y_start, &x_final, &y_final, &x_block, &y_block);
     // cin >> x_start >> y_start >> x_final >> y_final >> x_block >> y_block;
     if(x_start == -1) {
     	if(turn_num == 1) {// 传统开局，打表
-    		// printf("5 0 5 6 2 3\n"); 
-    		Board.turn_player = 1;
-    		Board.Move(0, 5, 6, 5, 3, 2);
-    		for(int i=0; i<8; i++) {
-    			for(int j=0; j<8; j++) {
-    				printf("%d ", Board.board[i][j]);
-    			}
-    			printf("\n");
-    		}
+    		fclose(stdin);
+    		printf("1\n5 0 5 6 2 3\n"); 
+    		fclose(stdout);
+    		// Board.turn_player = 1;
+    		// Board.Move(0, 5, 6, 5, 3, 2);
+    		// for(int i=0; i<8; i++) {
+    		// 	for(int j=0; j<8; j++) {
+    		// 		printf("%d ", Board.board[i][j]);
+    		// 	}
+    		// 	printf("\n");
+    		// }
     		return 0;
     	}
+    	Board.turn_player = 1;
+    	AIModeflag = 1;
     }
     else {
+    	AIModeflag = 2;
         Board.turn_player = 1;
         Board.Move(y_start, x_start, y_final, x_final, y_block, x_block); // 适应接口，需要换序
         Board.Next_Turn();
@@ -658,10 +665,17 @@ int main() {
     for(int i=1; i<=2*(turn_num-1); i++) {
     	// scanf("%d%d%d%d%d%d", &x_start, &y_start, &x_final, &y_final, &x_block, &y_block);
 	    x_start = read(), y_start = read(), x_final = read(), y_final= read(), x_block = read(), y_block = read();
+	    printf("%d %d %d %d %d %d\n", x_start, y_start, x_final, y_final, x_block, y_block);
         // cin >> x_start >> y_start >> x_final >> y_final >> x_block >> y_block;
         Board.Move(y_start, x_start, y_final, x_final, y_block, x_block); // 适应接口，需要换序
         Board.Next_Turn();
     }
+    fclose(stdin);
+    freopen(".\\data\\AI.amazons", "w", stdout);
+    if(AIModeflag == 1)
+	    printf("%d\n", turn_num);
+    else
+	    printf("%d\n", turn_num + 1);
     Board.uct_turnplayer = Board.turn_player; // 不加这行就全帮先手打工了
     Board.turns = turn_num;
     srand(time(NULL)); // 重置随机数种子
@@ -695,18 +709,18 @@ int main() {
 	        }
 	    }
 	    int sol = Board.child[bestidx]->last_move;
-	    // printf("%d %d %d %d %d %d\n", (sol/10000)%10, sol/100000, (sol/100)%10, (sol/1000)%10, sol%10, (sol/10)%10);
+	    printf("%d %d %d %d %d %d\n", (sol/10000)%10, sol/100000, (sol/100)%10, (sol/1000)%10, sol%10, (sol/10)%10);
 	    // cout << (sol/10000)%10 << " " << sol/100000 << " " << (sol/100)%10 << " " << (sol/1000)%10 << " " << sol%10 << " " << (sol/10)%10 << endl;
-    	Board.Move(sol/100000, (sol/10000)%10, (sol/1000)%10, (sol/100)%10, (sol/10)%10, sol%10);
-    	for(int i=0; i<8; i++) {
-    			for(int j=0; j<8; j++) {
-    				printf("%d ", Board.board[i][j]);
-    			}
-    			printf("\n");
-    		}
+    	// Board.Move(sol/100000, (sol/10000)%10, (sol/1000)%10, (sol/100)%10, (sol/10)%10, sol%10);
+    	// for(int i=0; i<8; i++) {
+    	// 		for(int j=0; j<8; j++) {
+    	// 			printf("%d ", Board.board[i][j]);
+    	// 		}
+    	// 		printf("\n");
+    	// 	}
     }
 
-    fclose(stdin);
+    // fclose(stdin);
     fclose(stdout);
     // cout << "#DEBUG:" << efficiency << endl;
     // system("pause");

@@ -9,6 +9,8 @@ def pic2py(picture_names, py_name):
     write_data = []
     for picture_name in picture_names:
 	    filename = picture_name.replace('.', '_')
+	    filename = filename.replace('-', '_')
+	    filename = filename.replace('+', '_')
 	    open_pic = open("%s" % picture_name, 'rb')
 	    b64str = base64.b64encode(open_pic.read())
 	    open_pic.close()
@@ -21,6 +23,6 @@ def pic2py(picture_names, py_name):
     f.close()
  
 if __name__ == '__main__':
-    pics = ["background.jpg", "ICON.ico", "EMPTY.png", "BLACK.png", "WHITE.png", "BLOCK.png", "CANGO.png", "CANBLOCK.png", "HINT.png", "NEWGAME.png", "REDO.png", "READ.png", "SAVE.png", "SKIN.png", "bot.exe"]
+    pics = ["background.jpg", "ICON.ico", "EMPTY.png", "BLACK.png", "WHITE.png", "BLOCK.png", "CANGO.png", "CANBLOCK.png", "HINT.png", "NEWGAME.png", "REDO.png", "READ.png", "SAVE.png", "SKIN.png", "bot.exe", "libgcc_s_sjlj-1.dll", "libstdc++-6.dll", "libwinpthread-1.dll"]
     pic2py(pics, 'memory_pic')	 # 将pics里面的图片写到 memory_pic.py 中
     print("ok")

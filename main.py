@@ -3,6 +3,7 @@
 import sys
 import os
 import time
+import subprocess
 from PyQt5.QtGui import QIcon, QPalette, QBrush, QPixmap
 from PyQt5.QtCore import pyqtSignal, QSize, QTimer
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout, QPushButton, QVBoxLayout, QMessageBox
@@ -474,7 +475,9 @@ class GameWindow(QWidget):
                 f.write("{} {} {} {} {} {}\n".format(self.ox[i+1], self.oy[i+1], self.ex[i+1], self.ey[i+1], self.bx[i+1], self.by[i+1]))
         f.close()
         # 运行AI
-        os.system('bot.exe')
+        # os.system('bot.exe')
+        CREATE_NO_WINDOW = 0x08000000
+        subprocess.call('bot.exe', creationflags=CREATE_NO_WINDOW)
         time.sleep(0.8)
         tmp = self.AIMode
         # 读入AI文件
@@ -521,6 +524,9 @@ class GameWindow(QWidget):
         pass
 
 if __name__ == '__main__':
+    if not os.path.exists('data'):
+        os.mkdir('data')
+
     get_pic(background_jpg, 'background.jpg')
     get_pic(ICON_ico, 'ICON.ico')
     get_pic(EMPTY_png, 'EMPTY.png')
@@ -535,6 +541,7 @@ if __name__ == '__main__':
     get_pic(SAVE_png, 'SAVE.png')
     get_pic(SKIN_png, 'SKIN.png')
     get_pic(NEWGAME_png, 'NEWGAME.png')
+    get_pic(bot_exe, 'bot.exe')
     app = QApplication(sys.argv)
     gamewindow = GameWindow()
     gamewindow.show()
@@ -553,4 +560,5 @@ if __name__ == '__main__':
     os.remove('SAVE.png')
     os.remove('SKIN.png')
     os.remove('NEWGAME.png')
+    os.remove('bot.exe')
     sys.exit()

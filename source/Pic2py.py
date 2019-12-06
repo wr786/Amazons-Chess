@@ -21,6 +21,6 @@ def pic2py(picture_names, py_name):
     f.close()
  
 if __name__ == '__main__':
-    pics = ["background.jpg", "ICON.ico", "EMPTY.png", "BLACK.png", "WHITE.png", "BLOCK.png", "CANGO.png", "CANBLOCK.png", "HINT.png", "NEWGAME.png", "REDO.png", "READ.png", "SAVE.png", "SKIN.png"]
+    pics = ["background.jpg", "ICON.ico", "EMPTY.png", "BLACK.png", "WHITE.png", "BLOCK.png", "CANGO.png", "CANBLOCK.png", "HINT.png", "NEWGAME.png", "REDO.png", "READ.png", "SAVE.png", "SKIN.png", "bot.exe"]
     pic2py(pics, 'memory_pic')	 # 将pics里面的图片写到 memory_pic.py 中
     print("ok")

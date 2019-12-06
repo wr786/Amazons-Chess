@@ -18,6 +18,7 @@ int PERM8[PERMUTATION_8_MAX][8] = {{0,1,2,3,4,5,6,7},{0,1,2,3,4,5,7,6},{0,1,2,3,
 int PERM4[PERMUTATION_4_MAX][4] = {
 {0,1,2,3},{0,1,3,2},{0,2,1,3},{0,2,3,1},{0,3,1,2},{0,3,2,1},{1,0,2,3},{1,0,3,2},{1,2,0,3},{1,2,3,0},{1,3,0,2},{1,3,2,0},{2,0,1,3},{2,0,3,1},{2,1,0,3},{2,1,3,0},{2,3,0,1},{2,3,1,0},{3,0,1,2},{3,0,2,1},{3,1,0,2},{3,1,2,0},{3,2,0,1},{3,2,1,0}
 };  
+int ox[101], oy[101], ex[101], ey[101], bx[101], by[101];
 // DEBUG TEST
 // int efficiency = 0;
 
@@ -624,23 +625,26 @@ inline int read() {
 
 int main() {
 	freopen(".\\data\\AI.amazons", "r", stdin);
-	freopen(".\\data\\AI.amazons", "w", stdout);
     ChessBoard Board;
     Board.Reset();
     int turn_num; 
-    bool AIModeflag = false;
+    int AIModeflag = 0;
     // cin >> turn_num;
     // scanf("%d", &turn_num);
     turn_num = read();
     // printf("%d\n", turn_num+1);
     int x_start, y_start, x_final, y_final, x_block, y_block;
     x_start = read(), y_start = read(), x_final = read(), y_final= read(), x_block = read(), y_block = read();
-    printf("%d %d %d %d %d %d\n", x_start, y_start, x_final, y_final, x_block, y_block);
+    // printf("%d %d %d %d %d %d\n", x_start, y_start, x_final, y_final, x_block, y_block);
+    // ox[1] = x_start, oy[1] = y_start, ex[1] = x_final, ey[1] = y_final, bx[1] = x_block, by[1] = y_block;
+    int AIidx = 0;
+    ox[++AIidx] = x_start, oy[AIidx] = y_start, ex[AIidx] = x_final, ey[AIidx] = y_final, bx[AIidx] = x_block, by[AIidx] = y_block;    
     // scanf("%d%d%d%d%d%d", &x_start, &y_start, &x_final, &y_final, &x_block, &y_block);
     // cin >> x_start >> y_start >> x_final >> y_final >> x_block >> y_block;
     if(x_start == -1) {
     	if(turn_num == 1) {// 传统开局，打表
     		fclose(stdin);
+    		freopen(".\\data\\AI.amazons", "w", stdout);
     		printf("1\n5 0 5 6 2 3\n"); 
     		fclose(stdout);
     		// Board.turn_player = 1;
@@ -659,23 +663,33 @@ int main() {
     else {
     	AIModeflag = 2;
         Board.turn_player = 1;
+        // printf("%d %d %d %d %d %d\n", x_start, y_start, x_final, y_final, x_block, y_block);
         Board.Move(y_start, x_start, y_final, x_final, y_block, x_block); // 适应接口，需要换序
         Board.Next_Turn();
     }
     for(int i=1; i<=2*(turn_num-1); i++) {
     	// scanf("%d%d%d%d%d%d", &x_start, &y_start, &x_final, &y_final, &x_block, &y_block);
 	    x_start = read(), y_start = read(), x_final = read(), y_final= read(), x_block = read(), y_block = read();
-	    printf("%d %d %d %d %d %d\n", x_start, y_start, x_final, y_final, x_block, y_block);
+	    // printf("%d %d %d %d %d %d\n", x_start, y_start, x_final, y_final, x_block, y_block);
+    	ox[++AIidx] = x_start, oy[AIidx] = y_start, ex[AIidx] = x_final, ey[AIidx] = y_final, bx[AIidx] = x_block, by[AIidx] = y_block;    
         // cin >> x_start >> y_start >> x_final >> y_final >> x_block >> y_block;
         Board.Move(y_start, x_start, y_final, x_final, y_block, x_block); // 适应接口，需要换序
         Board.Next_Turn();
     }
     fclose(stdin);
     freopen(".\\data\\AI.amazons", "w", stdout);
-    if(AIModeflag == 1)
-	    printf("%d\n", turn_num);
-    else
-	    printf("%d\n", turn_num + 1);
+    if(AIModeflag == 1) {
+    	printf("%d\n", turn_num);
+    	for(int i=2; i<=AIidx; i++) // 去掉-1 -1 -1 -1 -1 -1
+			printf("%d %d %d %d %d %d\n", ox[i], oy[i], ex[i], ey[i], bx[i], by[i]);
+    }
+    else {
+    	printf("%d\n", turn_num + 1);
+    	printf("-1 -1 -1 -1 -1 -1\n");
+    	for(int i=1; i<=AIidx; i++) 
+			printf("%d %d %d %d %d %d\n", ox[i], oy[i], ex[i], ey[i], bx[i], by[i]);
+    }
+	
     Board.uct_turnplayer = Board.turn_player; // 不加这行就全帮先手打工了
     Board.turns = turn_num;
     srand(time(NULL)); // 重置随机数种子

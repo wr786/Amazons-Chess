@@ -2,6 +2,7 @@
 # author: wr786
 import sys
 import os
+import time
 from PyQt5.QtGui import QIcon, QPalette, QBrush, QPixmap
 from PyQt5.QtCore import pyqtSignal, QSize, QTimer
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout, QPushButton, QVBoxLayout, QMessageBox
@@ -93,10 +94,11 @@ class GameWindow(QWidget):
         else:
             self.turn_logger.setText("当前回合：{} | 当前行动方：白方".format(self.turns))
         self.AIMode = 0
+        self.endGame = False
 
     def init_buttons(self):
         self.Redo_button = QPushButton(self)
-        self.Hint_button = QPushButton(self)
+        self.Hint_button = QPushButton(self) # 其实是人机BUTTON，但是懒得改了，大概HINT可以看作是Hit吧（笑
         self.Save_button = QPushButton(self)
         self.Read_button = QPushButton(self)
         self.Skin_button = QPushButton(self)
@@ -314,6 +316,7 @@ class GameWindow(QWidget):
         else:
             self.turn_logger.setText("当前回合：{} | 当前行动方：白方".format(self.turns))
         if not self.freeMove and self.AIMode == self.turn_player:
+            QApplication.processEvents() # 实时更新UI界面，这样才能看清移动步骤
             self.AIMove()
 
     def canMove(self, x, y):
@@ -341,8 +344,10 @@ class GameWindow(QWidget):
         # print("sum:{} {}\n".format(locked[1][4], locked[2][4]))
         if(locked[1][4]):
             QMessageBox.information(self,"游戏结束","白方获胜！",QMessageBox.Ok)
+            self.AIMode = False
         elif(locked[2][4]):
             QMessageBox.information(self,"游戏结束","黑方获胜！",QMessageBox.Ok)
+            self.AIMode = False
 
     def newGame(self): # 是新游戏
         if self.selectChessFlag:
@@ -382,31 +387,35 @@ class GameWindow(QWidget):
         if self.turns == 1: # 回到初始局面了
             QMessageBox.critical(self,"约束！","恁现在不能悔棋！",QMessageBox.Ok)
             return
-        self.turns -= 1
-        # self.canRegret = False
-        self.turn_player = 3 - self.turn_player
-        self.selectChessFlag = False
-        self.ChessBoard_unit_content[self.ex[self.turns]][self.ey[self.turns]] = 0
-        # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-        self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('EMPTY.png'))
-        self.ChessBoard_unit_content[self.bx[self.turns]][self.by[self.turns]] = 0
-        # self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-        self.ChessBoard_unit[self.bx[self.turns]][self.by[self.turns]].setIcon(QIcon('EMPTY.png'))
-        self.ChessBoard_unit_content[self.ox[self.turns]][self.oy[self.turns]] = self.turn_player
-        if self.turn_player == 1:
-            # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
-            self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('BLACK.png'))
-        else:
-            # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
-            self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('WHITE.png'))
-        for i in range(4):
-            if self.chess[self.turn_player][i] == self.ex[self.turns] * 10 + self.ey[self.turns]: # 找到被移动的棋
-                self.chess[self.turn_player][i] = self.ox[self.turns] * 10 + self.oy[self.turns]
-                break
-        if self.turn_player == 1:
-            self.turn_logger.setText("当前回合：{}　|　当前行动方：黑方".format(self.turns))
-        else:
-            self.turn_logger.setText("当前回合：{}　|　当前行动方：白方".format(self.turns))
+        regret_turns = 1
+        if self.AIMode != 0:
+            regret_turns = 2
+        for i in range(regret_turns):
+            self.turns -= 1
+            # self.canRegret = False
+            self.turn_player = 3 - self.turn_player
+            self.selectChessFlag = False
+            self.ChessBoard_unit_content[self.ex[self.turns]][self.ey[self.turns]] = 0
+            # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+            self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('EMPTY.png'))
+            self.ChessBoard_unit_content[self.bx[self.turns]][self.by[self.turns]] = 0
+            # self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
+            self.ChessBoard_unit[self.bx[self.turns]][self.by[self.turns]].setIcon(QIcon('EMPTY.png'))
+            self.ChessBoard_unit_content[self.ox[self.turns]][self.oy[self.turns]] = self.turn_player
+            if self.turn_player == 1:
+                # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+                self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('BLACK.png'))
+            else:
+                # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
+                self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('WHITE.png'))
+            for i in range(4):
+                if self.chess[self.turn_player][i] == self.ex[self.turns] * 10 + self.ey[self.turns]: # 找到被移动的棋
+                    self.chess[self.turn_player][i] = self.ox[self.turns] * 10 + self.oy[self.turns]
+                    break
+            if self.turn_player == 1:
+                self.turn_logger.setText("当前回合：{}　|　当前行动方：黑方".format(self.turns))
+            else:
+                self.turn_logger.setText("当前回合：{}　|　当前行动方：白方".format(self.turns))
 
     def saveLog(self): # 存档
         f = open(os.path.join(os.path.abspath('.'), 'data', 'archive.amazons'), 'w')
@@ -466,6 +475,7 @@ class GameWindow(QWidget):
         f.close()
         # 运行AI
         os.system('bot.exe')
+        time.sleep(0.8)
         tmp = self.AIMode
         # 读入AI文件
         self.newGame() # 将棋盘重置 

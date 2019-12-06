@@ -313,9 +313,9 @@ class GameWindow(QWidget):
         # self.canRegret = True
         self.turns += 1
         if self.turn_player == 1:
-            self.turn_logger.setText("当前回合：{} | 当前行动方：黑方".format(self.turns))
+            self.turn_logger.setText("当前回合：{}|当前行动方：黑方".format(self.turns))
         else:
-            self.turn_logger.setText("当前回合：{} | 当前行动方：白方".format(self.turns))
+            self.turn_logger.setText("当前回合：{}|当前行动方：白方".format(self.turns))
         if not self.freeMove and self.AIMode == self.turn_player:
             QApplication.processEvents() # 实时更新UI界面，这样才能看清移动步骤
             self.AIMove()
@@ -375,9 +375,9 @@ class GameWindow(QWidget):
         self.turns = 1
         self.freeMove = False
         if self.turn_player == 1:
-            self.turn_logger.setText("当前回合：{} | 当前行动方：黑方".format(self.turns))
+            self.turn_logger.setText("当前回合：{}|当前行动方：黑方".format(self.turns))
         else:
-            self.turn_logger.setText("当前回合：{} | 当前行动方：白方".format(self.turns))
+            self.turn_logger.setText("当前回合：{}|当前行动方：白方".format(self.turns))
         self.showChess()
         self.AIMode = 0
 
@@ -393,7 +393,7 @@ class GameWindow(QWidget):
             regret_turns = 2
         if self.turn_player == 2 and self.turns == 2: # 为了防止Bug
             regret_turns = 1
-            # self.AIMode = False
+            self.AIMode = False
         for i in range(regret_turns):
             self.turns -= 1
             # self.canRegret = False
@@ -417,9 +417,9 @@ class GameWindow(QWidget):
                     self.chess[self.turn_player][i] = self.ox[self.turns] * 10 + self.oy[self.turns]
                     break
             if self.turn_player == 1:
-                self.turn_logger.setText("当前回合：{}　|　当前行动方：黑方".format(self.turns))
+                self.turn_logger.setText("当前回合：{}|当前行动方：黑方".format(self.turns))
             else:
-                self.turn_logger.setText("当前回合：{}　|　当前行动方：白方".format(self.turns))
+                self.turn_logger.setText("当前回合：{}|当前行动方：白方".format(self.turns))
 
     def saveLog(self): # 存档
         f = open(os.path.join(os.path.abspath('.'), 'data', 'archive.amazons'), 'w')

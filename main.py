@@ -391,6 +391,9 @@ class GameWindow(QWidget):
         regret_turns = 1
         if self.AIMode != 0:
             regret_turns = 2
+        if self.turn_player == 2 and self.turns == 2: # 为了防止Bug
+            regret_turns = 1
+            # self.AIMode = False
         for i in range(regret_turns):
             self.turns -= 1
             # self.canRegret = False

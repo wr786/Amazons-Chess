@@ -6,8 +6,8 @@ import time
 import random
 import subprocess
 from PyQt5.QtGui import QIcon, QPalette, QBrush, QPixmap
-from PyQt5.QtCore import pyqtSignal, QSize, QTimer
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout, QPushButton, QVBoxLayout, QMessageBox
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from base64 import *
 from memory_pic import *
 
@@ -441,52 +441,61 @@ class GameWindow(QWidget):
             self.AIMode = False
 
     def saveLog(self): # 存档
-        f = open(os.path.join(os.path.abspath('.'), 'data', 'archive.amazons'), 'w')
-        f.write(str((self.turns+1)//2)) # 回合数，不用加一因为在ProcMove之后已经将回合数进行了加一
-        f.write('\n')
-        if self.turn_player == 1: # 下步为黑方行动
-            for i in range(self.turns): # 从-1-1-1-1-1-1开始，输出self.turns行move
-                f.write("{} {} {} {} {} {}\n".format(self.ox[i], self.oy[i], self.ex[i], self.ey[i], self.bx[i], self.by[i]))
-        else: # 下步为白方行动
-            for i in range(self.turns-1):
-                f.write("{} {} {} {} {} {}\n".format(self.ox[i+1], self.oy[i+1], self.ex[i+1], self.ey[i+1], self.bx[i+1], self.by[i+1]))
-        f.close()
-        QMessageBox.information(self,"免得恁不知道就说一声","存档完了！",QMessageBox.Ok)
-
-
+        log_name = QFileDialog.getSaveFileName(self,'保存存档','.\\data\\','Text files (*.amazons)')
+        # f = open(os.path.join(os.path.abspath('.'), 'data', 'archive.amazons'), 'w')
+        if log_name[0][-1:] == '': # 无选择
+            return
+        with open(os.path.join(os.path.abspath('.'), 'data', log_name[0]), 'w') as f:
+            f.write(str((self.turns+1)//2)) # 回合数，不用加一因为在ProcMove之后已经将回合数进行了加一
+            f.write('\n')
+            if self.turn_player == 1: # 下步为黑方行动
+                for i in range(self.turns): # 从-1-1-1-1-1-1开始，输出self.turns行move
+                    f.write("{} {} {} {} {} {}\n".format(self.ox[i], self.oy[i], self.ex[i], self.ey[i], self.bx[i], self.by[i]))
+            else: # 下步为白方行动
+                for i in range(self.turns-1):
+                    f.write("{} {} {} {} {} {}\n".format(self.ox[i+1], self.oy[i+1], self.ex[i+1], self.ey[i+1], self.bx[i+1], self.by[i+1]))
+            f.close()
+            # QMessageBox.information(self,"免得恁不知道就说一声","存档完了！",QMessageBox.Ok)
+        
     def readLog(self): # 读档
-        self.newGame() # 将棋盘重置 
-        self.freeMove = True
-        f = open(os.path.join(os.path.abspath('.'), 'data', 'archive.amazons'), "r")
-        my_turn = int(f.readline())
-        # 特殊处理第一行
-        (orix, oriy, endx, endy, blkx, blky) = f.readline().split(" ")
-        # print("{} {} {} {} {} {}".format(orix, oriy, endx, endy, int(blkx), int(blky)))
-        if orix == "-1": # 本回合为黑方
-            self.turn_player = 1
-        else: # 本回合为白方
-            self.turn_player = 1
-            self.ox[self.turns] = int(orix)
-            self.oy[self.turns] = int(oriy)
-            self.ex[self.turns] = int(endx)
-            self.ey[self.turns] = int(endy)
-            self.bx[self.turns] = int(blkx)
-            self.by[self.turns] = int(blky)
-            self.procMove()
-        for i in range((2*my_turn-1) - 1):
+        log_name = QFileDialog.getOpenFileName(self,'选择存档','.\\data\\','Text files (*.amazons)')
+        # f = open(os.path.join(os.path.abspath('.'), 'data', 'archive.amazons'), "r")
+        if log_name[0][-1:] == '': # 无选择
+            return
+        with open(os.path.join(os.path.abspath('.'), 'data', log_name[0]), "r") as f:
+            self.newGame() # 将棋盘重置 
+            self.freeMove = True
+            my_turn = int(f.readline())
+            # 特殊处理第一行
             (orix, oriy, endx, endy, blkx, blky) = f.readline().split(" ")
-            self.ox[self.turns] = int(orix)
-            self.oy[self.turns] = int(oriy)
-            self.ex[self.turns] = int(endx)
-            self.ey[self.turns] = int(endy)
-            self.bx[self.turns] = int(blkx)
-            self.by[self.turns] = int(blky)
-            self.procMove()
-            # print("{} {} {} {} {} {}".format(orix, oriy, endx, endy, blkx, blky))
-        f.close()
-        self.freeMove = False
+            # print("{} {} {} {} {} {}".format(orix, oriy, endx, endy, int(blkx), int(blky)))
+            if orix == "-1": # 本回合为黑方
+                self.turn_player = 1
+            else: # 本回合为白方
+                self.turn_player = 1
+                self.ox[self.turns] = int(orix)
+                self.oy[self.turns] = int(oriy)
+                self.ex[self.turns] = int(endx)
+                self.ey[self.turns] = int(endy)
+                self.bx[self.turns] = int(blkx)
+                self.by[self.turns] = int(blky)
+                self.procMove()
+            for i in range((2*my_turn-1) - 1):
+                (orix, oriy, endx, endy, blkx, blky) = f.readline().split(" ")
+                self.ox[self.turns] = int(orix)
+                self.oy[self.turns] = int(oriy)
+                self.ex[self.turns] = int(endx)
+                self.ey[self.turns] = int(endy)
+                self.bx[self.turns] = int(blkx)
+                self.by[self.turns] = int(blky)
+                self.procMove()
+                # print("{} {} {} {} {} {}".format(orix, oriy, endx, endy, blkx, blky))
+            f.close()
+            self.freeMove = False
 
-    def AIMove(self): # 待补足
+    def AIMove(self): 
+        CREATE_NO_WINDOW = 0x08000000
+        subprocess.call('attrib -s -h .\\data\\AI.amazons', creationflags=CREATE_NO_WINDOW) # 隐藏AI文件
         # 写入AI文件
         f = open(os.path.join(os.path.abspath('.'), 'data', 'AI.amazons'), 'w')
         f.write(str((self.turns+1)//2)) # 回合数，不用加一因为在ProcMove之后已经将回合数进行了加一
@@ -501,8 +510,8 @@ class GameWindow(QWidget):
         # 运行AI
         # os.system('bot.exe')
         CREATE_NO_WINDOW = 0x08000000
-        subprocess.call('bot.exe', creationflags=CREATE_NO_WINDOW)
-        time.sleep(0.8)
+        subprocess.call('.\\source\\bot.exe', creationflags=CREATE_NO_WINDOW)
+        # time.sleep(0.8)
         tmp = self.AIMode
         # 读入AI文件
         self.newGame() # 将棋盘重置 
@@ -536,6 +545,7 @@ class GameWindow(QWidget):
             # print("{} {} {} {} {} {}".format(orix, oriy, endx, endy, blkx, blky))
         f.close()
         self.freeMove = False
+        subprocess.call('attrib +s +h .\\data\\AI.amazons', creationflags=CREATE_NO_WINDOW) # 隐藏AI文件
 
     def hint(self): # 暂时改为人机对战
         if self.selectChessFlag == True:

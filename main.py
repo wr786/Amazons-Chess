@@ -3,6 +3,7 @@
 import sys
 import os
 import time
+import random
 import subprocess
 from PyQt5.QtGui import QIcon, QPalette, QBrush, QPixmap
 from PyQt5.QtCore import pyqtSignal, QSize, QTimer
@@ -11,9 +12,12 @@ from base64 import *
 from memory_pic import *
 
 def get_pic(pic_code, pic_name): # 生成资源文件
-    image = open(pic_name, 'wb')
-    image.write(b64decode(pic_code))
-    image.close()
+    if not os.path.exists('.\\source\\' + pic_name):
+        image = open('.\\source\\' + pic_name, 'wb')
+        image.write(b64decode(pic_code))
+        image.close()
+        # CREATE_NO_WINDOW = 0x08000000
+        # subprocess.call('attrib +s +h .\\source\\' + pic_name, creationflags=CREATE_NO_WINDOW) # 隐藏资源文件
 
 def inBoard(x, y):
     if(x < 0 or x >= 8 or y < 0 or y >= 8):
@@ -31,15 +35,16 @@ class GameWindow(QWidget):
     def init_game_window(self):
         self.setWindowTitle('Amazons ~ 再生産！ © wr786')
         # self.setWindowIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'ICON.ico')))
-        self.setWindowIcon(QIcon('ICON.ico'))
+        self.setWindowIcon(QIcon('.\\source\\ICON.ico'))
         self.setFixedSize(1600, 1080)
         # self.resize(1440, 1080)
-        palette1 = QPalette()
+        # palette1 = QPalette()
         # palette1.setBrush(self.backgroundRole(), QBrush(QPixmap(os.path.join(os.path.abspath('.'), 'source', 'background.jpg'))))
-        palette1.setBrush(self.backgroundRole(), QBrush(QPixmap('background1.jpg')))
+        # palette1.setBrush(self.backgroundRole(), QBrush(QPixmap('background1.jpg')))
         self.skinNum = 6
-        self.skinCur = 1
-        self.setPalette(palette1)
+        self.skinCur = random.randint(1, self.skinNum+1)
+        self.changeSkin()
+        # self.setPalette(palette1)
         self.showChess()
         # self.readLog()
 
@@ -64,7 +69,7 @@ class GameWindow(QWidget):
                 self.ChessBoard_unit[i][j].setGeometry(250 + 100*(i-1), 250 + 100*(j-1), 100, 100)
                 self.ChessBoard_unit[i][j].setIconSize(QSize(110,110))
                 # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-                self.ChessBoard_unit[i][j].setIcon(QIcon('EMPTY.png'))
+                self.ChessBoard_unit[i][j].setIcon(QIcon('.\\source\\EMPTY.png'))
                 self.ChessBoard_unit[i][j].clicked.connect(self.selectChess)
                 # self.ChessBoard_unit[i][j].clicked.connect(self.test)
         # init初始坐标
@@ -109,22 +114,22 @@ class GameWindow(QWidget):
         self.Setsumei_button = QPushButton(self)
 
         # self.Redo_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'REDO.png')))
-        self.Redo_button.setIcon(QIcon('REDO.png'))
+        self.Redo_button.setIcon(QIcon('.\\source\\REDO.png'))
         self.Redo_button.setIconSize(QSize(80,80))
         # self.Hint_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'HINT.png')))
-        self.Hint_button.setIcon(QIcon('HINT.png'))
+        self.Hint_button.setIcon(QIcon('.\\source\\HINT.png'))
         self.Hint_button.setIconSize(QSize(80,80))
         # self.Save_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'SAVE.png')))
-        self.Save_button.setIcon(QIcon('SAVE.png'))
+        self.Save_button.setIcon(QIcon('.\\source\\SAVE.png'))
         self.Save_button.setIconSize(QSize(80,80))
         # self.Read_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'READ.png')))
-        self.Read_button.setIcon(QIcon('READ.png'))
+        self.Read_button.setIcon(QIcon('.\\source\\READ.png'))
         self.Read_button.setIconSize(QSize(80,80))
         # self.Skin_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'SKIN.png')))
-        self.Skin_button.setIcon(QIcon('SKIN.png'))
+        self.Skin_button.setIcon(QIcon('.\\source\\SKIN.png'))
         self.Skin_button.setIconSize(QSize(80,80))
         # self.NewGame_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'NEWGAME.png')))
-        self.NewGame_button.setIcon(QIcon('NEWGAME.png'))
+        self.NewGame_button.setIcon(QIcon('.\\source\\NEWGAME.png'))
         self.NewGame_button.setIconSize(QSize(80,80))
 
         self.Redo_button.setText("悔棋")
@@ -200,16 +205,16 @@ class GameWindow(QWidget):
                 chesstype = self.ChessBoard_unit_content[i][j]
                 if chesstype == 0: # EMPTY
                     # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-                    self.ChessBoard_unit[i][j].setIcon(QIcon('EMPTY.png'))
+                    self.ChessBoard_unit[i][j].setIcon(QIcon('.\\source\\EMPTY.png'))
                 elif chesstype == 1: # BLACK
                     # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
-                    self.ChessBoard_unit[i][j].setIcon(QIcon('BLACK.png'))
+                    self.ChessBoard_unit[i][j].setIcon(QIcon('.\\source\\BLACK.png'))
                 elif chesstype == 2: # WHITE
                     # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
-                    self.ChessBoard_unit[i][j].setIcon(QIcon('WHITE.png'))
+                    self.ChessBoard_unit[i][j].setIcon(QIcon('.\\source\\WHITE.png'))
                 elif chesstype == -1: # BLOCK
                     # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLOCK.png')))
-                    self.ChessBoard_unit[i][j].setIcon(QIcon('BLOCK.png'))
+                    self.ChessBoard_unit[i][j].setIcon(QIcon('.\\source\\BLOCK.png'))
         # sender = self.sender() # 用sender来获取发送者
         # sender.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
 
@@ -243,7 +248,7 @@ class GameWindow(QWidget):
                 self.ChessBoard_unit[nx][ny].clicked.connect(self.selectBlock)
                 self.ChessBoard_unit_content[nx][ny] = 19260817 # 被标记为黄色的可以去往的格子
                 # self.ChessBoard_unit[nx][ny].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'CANGO.png')))
-                self.ChessBoard_unit[nx][ny].setIcon(QIcon('CANGO.png'))
+                self.ChessBoard_unit[nx][ny].setIcon(QIcon('.\\source\\CANGO.png'))
                 nx += self.dx[dir]
                 ny += self.dy[dir]
 
@@ -259,17 +264,17 @@ class GameWindow(QWidget):
                 if self.ChessBoard_unit_content[i][j] == 19260817: # 恢复
                     self.ChessBoard_unit_content[i][j] = 0
                     # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-                    self.ChessBoard_unit[i][j].setIcon(QIcon('EMPTY.png'))
+                    self.ChessBoard_unit[i][j].setIcon(QIcon('.\\source\\EMPTY.png'))
                     self.ChessBoard_unit[i][j].clicked.disconnect(self.selectBlock)
                     self.ChessBoard_unit[i][j].clicked.connect(self.selectChess)
         # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-        self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('EMPTY.png'))
+        self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('.\\source\\EMPTY.png'))
         if self.turn_player == 1:
             # self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
-            self.ChessBoard_unit[x][y].setIcon(QIcon('BLACK.png'))
+            self.ChessBoard_unit[x][y].setIcon(QIcon('.\\source\\BLACK.png'))
         else:
             # self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
-            self.ChessBoard_unit[x][y].setIcon(QIcon('WHITE.png'))
+            self.ChessBoard_unit[x][y].setIcon(QIcon('.\\source\\WHITE.png'))
         self.ex[self.turns] = x
         self.ey[self.turns] = y
         for dir in range(8):
@@ -280,7 +285,7 @@ class GameWindow(QWidget):
                 self.ChessBoard_unit[nx][ny].clicked.connect(self.procMove)
                 self.ChessBoard_unit_content[nx][ny] = -19260817 # 被标记为红色的可以放障碍物的格子
                 # self.ChessBoard_unit[nx][ny].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'CANBLOCK.png')))
-                self.ChessBoard_unit[nx][ny].setIcon(QIcon('CANBLOCK.png'))
+                self.ChessBoard_unit[nx][ny].setIcon(QIcon('.\\source\\CANBLOCK.png'))
                 nx += self.dx[dir]
                 ny += self.dy[dir]
 
@@ -297,24 +302,24 @@ class GameWindow(QWidget):
                     if self.ChessBoard_unit_content[i][j] == -19260817: # 恢复
                         self.ChessBoard_unit_content[i][j] = 0
                         # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-                        self.ChessBoard_unit[i][j].setIcon(QIcon('EMPTY.png'))
+                        self.ChessBoard_unit[i][j].setIcon(QIcon('.\\source\\EMPTY.png'))
                         self.ChessBoard_unit[i][j].clicked.disconnect(self.procMove)
                         self.ChessBoard_unit[i][j].clicked.connect(self.selectChess)
             self.bx[self.turns] = x
             self.by[self.turns] = y
         self.ChessBoard_unit_content[self.ox[self.turns]][self.oy[self.turns]] = 0
         # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-        self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('EMPTY.png'))
+        self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('.\\source\\EMPTY.png'))
         self.ChessBoard_unit_content[self.ex[self.turns]][self.ey[self.turns]] = self.turn_player
         if self.turn_player == 1:
             # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
-            self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('BLACK.png'))
+            self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('.\\source\\BLACK.png'))
         else:
             # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
-            self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('WHITE.png'))
+            self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('.\\source\\WHITE.png'))
         self.ChessBoard_unit_content[self.bx[self.turns]][self.by[self.turns]] = -1
         # self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLOCK.png')))
-        self.ChessBoard_unit[self.bx[self.turns]][self.by[self.turns]].setIcon(QIcon('BLOCK.png'))
+        self.ChessBoard_unit[self.bx[self.turns]][self.by[self.turns]].setIcon(QIcon('.\\source\\BLOCK.png'))
         self.selectChessFlag = False
         for i in range(4):
             if self.chess[self.turn_player][i] == self.ox[self.turns] * 10 + self.oy[self.turns]: # 找到被移动的棋
@@ -413,17 +418,17 @@ class GameWindow(QWidget):
             self.selectChessFlag = False
             self.ChessBoard_unit_content[self.ex[self.turns]][self.ey[self.turns]] = 0
             # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-            self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('EMPTY.png'))
+            self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('.\\source\\EMPTY.png'))
             self.ChessBoard_unit_content[self.bx[self.turns]][self.by[self.turns]] = 0
             # self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
-            self.ChessBoard_unit[self.bx[self.turns]][self.by[self.turns]].setIcon(QIcon('EMPTY.png'))
+            self.ChessBoard_unit[self.bx[self.turns]][self.by[self.turns]].setIcon(QIcon('.\\source\\EMPTY.png'))
             self.ChessBoard_unit_content[self.ox[self.turns]][self.oy[self.turns]] = self.turn_player
             if self.turn_player == 1:
                 # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
-                self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('BLACK.png'))
+                self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('.\\source\\BLACK.png'))
             else:
                 # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
-                self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('WHITE.png'))
+                self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('.\\source\\WHITE.png'))
             for i in range(4):
                 if self.chess[self.turn_player][i] == self.ex[self.turns] * 10 + self.ey[self.turns]: # 找到被移动的棋
                     self.chess[self.turn_player][i] = self.ox[self.turns] * 10 + self.oy[self.turns]
@@ -446,6 +451,8 @@ class GameWindow(QWidget):
             for i in range(self.turns-1):
                 f.write("{} {} {} {} {} {}\n".format(self.ox[i+1], self.oy[i+1], self.ex[i+1], self.ey[i+1], self.bx[i+1], self.by[i+1]))
         f.close()
+        QMessageBox.information(self,"免得恁不知道就说一声","存档完了！",QMessageBox.Ok)
+
 
     def readLog(self): # 读档
         self.newGame() # 将棋盘重置 
@@ -543,7 +550,7 @@ class GameWindow(QWidget):
     def changeSkin(self): # 换肤
         self.skinCur = (self.skinCur) % self.skinNum + 1
         paletteNxt = QPalette()
-        paletteNxt.setBrush(self.backgroundRole(), QBrush(QPixmap('background' + str(self.skinCur) + '.jpg')))
+        paletteNxt.setBrush(self.backgroundRole(), QBrush(QPixmap('.\\source\\background' + str(self.skinCur) + '.jpg')))
         self.setPalette(paletteNxt)
 
     def setsumei(self): # 游戏说明
@@ -559,6 +566,8 @@ class GameWindow(QWidget):
 if __name__ == '__main__':
     if not os.path.exists('data'):
         os.mkdir('data')
+    if not os.path.exists('source'):
+        os.mkdir('source')
     # 生成资源文件
     get_pic(background1_jpg, 'background1.jpg')
     get_pic(background2_jpg, 'background2.jpg')
@@ -583,16 +592,12 @@ if __name__ == '__main__':
     get_pic(libgcc_s_sjlj_1_dll, 'libgcc_s_sjlj-1.dll')
     get_pic(libstdc___6_dll, 'libstdc++-6.dll')
     get_pic(libwinpthread_1_dll, 'libwinpthread-1.dll')
-    sources = ["background1.jpg", "background2.jpg", "background3.jpg", "background4.jpg", "background5.jpg", "background6.jpg", "ICON.ico", "EMPTY.png", "BLACK.png", "WHITE.png", "BLOCK.png", "CANGO.png", "CANBLOCK.png", "HINT.png", "NEWGAME.png", "REDO.png", "READ.png", "SAVE.png", "SKIN.png", "bot.exe", "libgcc_s_sjlj-1.dll", "libstdc++-6.dll", "libwinpthread-1.dll"]
-    # 隐藏资源文件
-    CREATE_NO_WINDOW = 0x08000000
-    for source in sources:
-        subprocess.call('attrib +s +h ' + source, creationflags=CREATE_NO_WINDOW)
     app = QApplication(sys.argv)
     gamewindow = GameWindow()
     gamewindow.show()
     app.exec_()
     # 清除资源文件
-    for source in sources:
-        os.remove(source)
+    # sources = ["background1.jpg", "background2.jpg", "background3.jpg", "background4.jpg", "background5.jpg", "background6.jpg", "ICON.ico", "EMPTY.png", "BLACK.png", "WHITE.png", "BLOCK.png", "CANGO.png", "CANBLOCK.png", "HINT.png", "NEWGAME.png", "REDO.png", "READ.png", "SAVE.png", "SKIN.png", "bot.exe", "libgcc_s_sjlj-1.dll", "libstdc++-6.dll", "libwinpthread-1.dll"]
+    # for source in sources:
+    #     os.remove(source)
     sys.exit()

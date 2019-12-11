@@ -545,18 +545,21 @@ class GameWindow(QWidget):
         paletteNxt = QPalette()
         paletteNxt.setBrush(self.backgroundRole(), QBrush(QPixmap('background' + str(self.skinCur) + '.jpg')))
         self.setPalette(paletteNxt)
-    # <----------------------------------------待施工------------------------------------>
+
     def setsumei(self): # 游戏说明
         QMessageBox.information(self, 'ゲーム説明', '点选棋子以完成移动操作\n \
                                                      点选存档/读档/换肤/新游戏/悔棋进行字面意思的操作\n \
                                                      在想要开始人机的回合，点选人机即可启动人机模式，机器人所执棋子为开启人机模式的回合的移动方\n \
                                                      在人机模式开启之后，机器人所执颜色棋子将会自行进行移动，每一步会在1s内完成，请稍事等待，尽量不要进行奇怪的操作，因为我不想写async（？？？\n \
                                                      当然，如果恁非要进行奇怪的操作也大可试试，如果出现程序错误欢迎给我提issues！', QMessageBox.Ok)
+
+    # <----------------------------------------待施工------------------------------------>
+    
         
 if __name__ == '__main__':
     if not os.path.exists('data'):
         os.mkdir('data')
-
+    # 生成资源文件
     get_pic(background1_jpg, 'background1.jpg')
     get_pic(background2_jpg, 'background2.jpg')
     get_pic(background3_jpg, 'background3.jpg')
@@ -579,30 +582,15 @@ if __name__ == '__main__':
     get_pic(libgcc_s_sjlj_1_dll, 'libgcc_s_sjlj-1.dll')
     get_pic(libstdc___6_dll, 'libstdc++-6.dll')
     get_pic(libwinpthread_1_dll, 'libwinpthread-1.dll')
+    sources = ["background1.jpg", "background2.jpg", "background3.jpg", "background4.jpg", "background5.jpg", "ICON.ico", "EMPTY.png", "BLACK.png", "WHITE.png", "BLOCK.png", "CANGO.png", "CANBLOCK.png", "HINT.png", "NEWGAME.png", "REDO.png", "READ.png", "SAVE.png", "SKIN.png", "bot.exe", "libgcc_s_sjlj-1.dll", "libstdc++-6.dll", "libwinpthread-1.dll"]
+    # 隐藏资源文件
+    for source in sources:
+        os.system('attrib +s +h ' + source)
     app = QApplication(sys.argv)
     gamewindow = GameWindow()
     gamewindow.show()
     app.exec_()
-    os.remove('background1.jpg')
-    os.remove('background2.jpg')
-    os.remove('background3.jpg')
-    os.remove('background4.jpg')
-    os.remove('background5.jpg')
-    os.remove('ICON.ico')
-    os.remove('EMPTY.png')
-    os.remove('BLACK.png')
-    os.remove('WHITE.png')
-    os.remove('BLOCK.png')
-    os.remove('CANGO.png')
-    os.remove('CANBLOCK.png')
-    os.remove('HINT.png')
-    os.remove('REDO.png')
-    os.remove('READ.png')
-    os.remove('SAVE.png')
-    os.remove('SKIN.png')
-    os.remove('NEWGAME.png')
-    os.remove('bot.exe')
-    os.remove('libgcc_s_sjlj-1.dll')
-    os.remove('libstdc++-6.dll')
-    os.remove('libwinpthread-1.dll')
+    # 清除资源文件
+    for source in sources:
+        os.remove(source)
     sys.exit()

@@ -24,19 +24,73 @@ def inBoard(x, y):
         return False
     return True
 
-class GameWindow(QWidget):
+class LoadingWindow(QWidget):
+    def __init__(self):
+        super(LoadingWindow, self).__init__()
+        self.setWindowFlags(Qt.FramelessWindowHint) # 隐藏边框
+        self.setFixedSize(537, 244)
+        palette = QPalette()
+        palette.setBrush(self.backgroundRole(), QBrush(QPixmap('.\\source\\loading.jpg')))
+        self.setPalette(palette)
+        # 居中化
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+    def loading(self):
+        # 生成资源文件
+        get_pic(background1_jpg, 'background1.jpg')
+        get_pic(background2_jpg, 'background2.jpg')
+        get_pic(background3_jpg, 'background3.jpg')
+        get_pic(background4_jpg, 'background4.jpg')
+        get_pic(background5_jpg, 'background5.jpg')
+        get_pic(background6_jpg, 'background6.jpg')
+        get_pic(ICON_ico, 'ICON.ico')
+        get_pic(EMPTY_png, 'EMPTY.png')
+        get_pic(BLACK_png, 'BLACK.png')
+        get_pic(WHITE_png, 'WHITE.png')
+        get_pic(BLOCK_png, 'BLOCK.png')
+        get_pic(CANGO_png, 'CANGO.png')
+        get_pic(CANBLOCK_png, 'CANBLOCK.png')
+        get_pic(HINT_png, 'HINT.png')
+        get_pic(REDO_png, 'REDO.png')
+        get_pic(READ_png, 'READ.png')
+        get_pic(SAVE_png, 'SAVE.png')
+        get_pic(SKIN_png, 'SKIN.png')
+        get_pic(NEWGAME_png, 'NEWGAME.png')
+        get_pic(bot_exe, 'bot.exe')
+        get_pic(libgcc_s_sjlj_1_dll, 'libgcc_s_sjlj-1.dll')
+        get_pic(libstdc___6_dll, 'libstdc++-6.dll')
+        get_pic(libwinpthread_1_dll, 'libwinpthread-1.dll')
+
+class GameWindow(QMainWindow):
     
     def __init__(self):
         super(GameWindow, self).__init__()
+        self.load()
         self.init_chess_board()
         self.init_game_window()
         self.init_buttons()
+        self.loadingWindow.close()        
+        self.show()
+
+    def load(self):
+        # self.hide()
+        self.loadingWindow = LoadingWindow()
+        self.loadingWindow.show()
+        self.loadingWindow.loading()
+        time.sleep(0.5) # 免得看不清（？？？
 
     def init_game_window(self):
         self.setWindowTitle('Amazons ~ 再生産！ © wr786')
         # self.setWindowIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'ICON.ico')))
         self.setWindowIcon(QIcon('.\\source\\ICON.ico'))
         self.setFixedSize(1600, 1080)
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
         # self.resize(1440, 1080)
         # palette1 = QPalette()
         # palette1.setBrush(self.backgroundRole(), QBrush(QPixmap(os.path.join(os.path.abspath('.'), 'source', 'background.jpg'))))
@@ -585,40 +639,17 @@ class GameWindow(QWidget):
                                                      当然，如果恁非要进行奇怪的操作也大可试试，如果出现程序错误欢迎给我提issues！', QMessageBox.Ok)
 
     # <----------------------------------------待施工------------------------------------>
-    
         
 if __name__ == '__main__':
     if not os.path.exists('data'):
         os.mkdir('data')
     if not os.path.exists('source'):
         os.mkdir('source')
-    # 生成资源文件
-    get_pic(background1_jpg, 'background1.jpg')
-    get_pic(background2_jpg, 'background2.jpg')
-    get_pic(background3_jpg, 'background3.jpg')
-    get_pic(background4_jpg, 'background4.jpg')
-    get_pic(background5_jpg, 'background5.jpg')
-    get_pic(background6_jpg, 'background6.jpg')
-    get_pic(ICON_ico, 'ICON.ico')
-    get_pic(EMPTY_png, 'EMPTY.png')
-    get_pic(BLACK_png, 'BLACK.png')
-    get_pic(WHITE_png, 'WHITE.png')
-    get_pic(BLOCK_png, 'BLOCK.png')
-    get_pic(CANGO_png, 'CANGO.png')
-    get_pic(CANBLOCK_png, 'CANBLOCK.png')
-    get_pic(HINT_png, 'HINT.png')
-    get_pic(REDO_png, 'REDO.png')
-    get_pic(READ_png, 'READ.png')
-    get_pic(SAVE_png, 'SAVE.png')
-    get_pic(SKIN_png, 'SKIN.png')
-    get_pic(NEWGAME_png, 'NEWGAME.png')
-    get_pic(bot_exe, 'bot.exe')
-    get_pic(libgcc_s_sjlj_1_dll, 'libgcc_s_sjlj-1.dll')
-    get_pic(libstdc___6_dll, 'libstdc++-6.dll')
-    get_pic(libwinpthread_1_dll, 'libwinpthread-1.dll')
+    # 创建加载页面
     app = QApplication(sys.argv)
-    gamewindow = GameWindow()
-    gamewindow.show()
+    get_pic(loading_jpg, 'loading.jpg')
+    gameWindow = GameWindow()
+    # gameWindow.show()
     app.exec_()
     # 清除资源文件
     # sources = ["background1.jpg", "background2.jpg", "background3.jpg", "background4.jpg", "background5.jpg", "background6.jpg", "ICON.ico", "EMPTY.png", "BLACK.png", "WHITE.png", "BLOCK.png", "CANGO.png", "CANBLOCK.png", "HINT.png", "NEWGAME.png", "REDO.png", "READ.png", "SAVE.png", "SKIN.png", "bot.exe", "libgcc_s_sjlj-1.dll", "libstdc++-6.dll", "libwinpthread-1.dll"]

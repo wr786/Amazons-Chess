@@ -36,7 +36,9 @@ class GameWindow(QWidget):
         # self.resize(1440, 1080)
         palette1 = QPalette()
         # palette1.setBrush(self.backgroundRole(), QBrush(QPixmap(os.path.join(os.path.abspath('.'), 'source', 'background.jpg'))))
-        palette1.setBrush(self.backgroundRole(), QBrush(QPixmap('background.jpg')))
+        palette1.setBrush(self.backgroundRole(), QBrush(QPixmap('background1.jpg')))
+        self.skinNum = 5
+        self.skinCur = 1
         self.setPalette(palette1)
         self.showChess()
         # self.readLog()
@@ -420,6 +422,8 @@ class GameWindow(QWidget):
                 self.turn_logger.setText("当前回合：{}|当前行动方：黑方".format(self.turns))
             else:
                 self.turn_logger.setText("当前回合：{}|当前行动方：白方".format(self.turns))
+        if self.turns == 1:
+            self.AIMode = False
 
     def saveLog(self): # 存档
         f = open(os.path.join(os.path.abspath('.'), 'data', 'archive.amazons'), 'w')
@@ -464,7 +468,7 @@ class GameWindow(QWidget):
             # print("{} {} {} {} {} {}".format(orix, oriy, endx, endy, blkx, blky))
         f.close()
         self.freeMove = False
-    # <----------------------------------------待施工------------------------------------>
+
     def AIMove(self): # 待补足
         # 写入AI文件
         f = open(os.path.join(os.path.abspath('.'), 'data', 'AI.amazons'), 'w')
@@ -517,6 +521,9 @@ class GameWindow(QWidget):
         self.freeMove = False
 
     def hint(self): # 暂时改为人机对战
+        if self.selectChessFlag == True:
+            QMessageBox.critical(self,"不要脚踏两条船！","请下完这步再打开人机模式！",QMessageBox.Ok)
+            return
         if self.AIMode == 0:
             self.AIMode = self.turn_player
             self.AIMove()
@@ -524,13 +531,23 @@ class GameWindow(QWidget):
             QMessageBox.critical(self,"打则死路一条！","恁已经处于人机对战模式！",QMessageBox.Ok)
 
     def changeSkin(self): # 换肤
+        self.skinCur = (self.skinCur) % self.skinNum + 1
+        paletteNxt = QPalette()
+        paletteNxt.setBrush(self.backgroundRole(), QBrush(QPixmap('background' + str(self.skinCur) + '.jpg')))
+        self.setPalette(paletteNxt)
+    # <----------------------------------------待施工------------------------------------>
+    def howToPlay(self): # 游戏说明
         pass
-
+        
 if __name__ == '__main__':
     if not os.path.exists('data'):
         os.mkdir('data')
 
-    get_pic(background_jpg, 'background.jpg')
+    get_pic(background1_jpg, 'background1.jpg')
+    get_pic(background2_jpg, 'background2.jpg')
+    get_pic(background3_jpg, 'background3.jpg')
+    get_pic(background4_jpg, 'background4.jpg')
+    get_pic(background5_jpg, 'background5.jpg')
     get_pic(ICON_ico, 'ICON.ico')
     get_pic(EMPTY_png, 'EMPTY.png')
     get_pic(BLACK_png, 'BLACK.png')
@@ -552,7 +569,11 @@ if __name__ == '__main__':
     gamewindow = GameWindow()
     gamewindow.show()
     app.exec_()
-    os.remove('background.jpg')
+    os.remove('background1.jpg')
+    os.remove('background2.jpg')
+    os.remove('background3.jpg')
+    os.remove('background4.jpg')
+    os.remove('background5.jpg')
     os.remove('ICON.ico')
     os.remove('EMPTY.png')
     os.remove('BLACK.png')

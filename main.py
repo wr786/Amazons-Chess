@@ -97,6 +97,7 @@ class GameWindow(QWidget):
         self.bx = {0:-1}
         self.by = {0:-1}
         self.freeMove = False
+        self.winFlag = False
         if self.turn_player == 1:
             self.turn_logger.setText("当前回合：{} | 当前行动方：黑方".format(self.turns))
         else:
@@ -222,6 +223,9 @@ class GameWindow(QWidget):
         # 此处应有判断是否为自己的棋子
         if self.selectChessFlag: # 此处应有弹出提示框
             QMessageBox.critical(self,"请先把这步走完！","恁已经选择了一个棋子，请先把这步走完！",QMessageBox.Ok)
+            return
+        if self.winFlag: # 判断是否已是获胜局面
+            QMessageBox.critical(self,"停下来啊！","胜负已判！游戏已经结束了！",QMessageBox.Ok)
             return
         sender = self.sender()
         x = -1
@@ -363,9 +367,11 @@ class GameWindow(QWidget):
         if(locked[1][4]):
             QMessageBox.information(self,"游戏结束","白方获胜！",QMessageBox.Ok)
             self.AIMode = False
+            self.winFlag = True
         elif(locked[2][4]):
             QMessageBox.information(self,"游戏结束","黑方获胜！",QMessageBox.Ok)
             self.AIMode = False
+            self.winFlag = True
 
     def newGame(self): # 是新游戏
         if self.selectChessFlag:
@@ -397,6 +403,7 @@ class GameWindow(QWidget):
             self.turn_logger.setText("当前回合：{}|当前行动方：白方".format(self.turns))
         self.showChess()
         self.AIMode = 0
+        self.winFlag = False
 
     def regret(self): # 悔棋     
         if self.selectChessFlag:
@@ -439,8 +446,12 @@ class GameWindow(QWidget):
                 self.turn_logger.setText("当前回合：{}|当前行动方：白方".format(self.turns))
         if self.turns == 1:
             self.AIMode = False
+        self.winFlag = False
 
     def saveLog(self): # 存档
+        # if self.winFlag == True:
+        #     QMessageBox.critical(self, "这没有任何意义！", "胜负已判，还存什么档啊？", QMessageBox.Ok)
+        #     return
         log_name = QFileDialog.getSaveFileName(self,'保存存档','.\\data\\','Text files (*.amazons)')
         # f = open(os.path.join(os.path.abspath('.'), 'data', 'archive.amazons'), 'w')
         if log_name[0][-1:] == '': # 无选择
@@ -548,6 +559,9 @@ class GameWindow(QWidget):
         subprocess.call('attrib +s +h .\\data\\AI.amazons', creationflags=CREATE_NO_WINDOW) # 隐藏AI文件
 
     def hint(self): # 暂时改为人机对战
+        if self.winFlag == True:
+            QMessageBox.critical(self,"Position Zero!!!", "胜负已判！打则死路一条！", QMessageBox.Ok)
+            return
         if self.selectChessFlag == True:
             QMessageBox.critical(self,"不要脚踏两条船！","请下完这步再打开人机模式！",QMessageBox.Ok)
             return

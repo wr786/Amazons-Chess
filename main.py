@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout, QPushBut
 from base64 import *
 from memory_pic import *
 
-def get_pic(pic_code, pic_name):
+def get_pic(pic_code, pic_name): # 生成资源文件
     image = open(pic_name, 'wb')
     image.write(b64decode(pic_code))
     image.close()
@@ -37,7 +37,7 @@ class GameWindow(QWidget):
         palette1 = QPalette()
         # palette1.setBrush(self.backgroundRole(), QBrush(QPixmap(os.path.join(os.path.abspath('.'), 'source', 'background.jpg'))))
         palette1.setBrush(self.backgroundRole(), QBrush(QPixmap('background1.jpg')))
-        self.skinNum = 5
+        self.skinNum = 6
         self.skinCur = 1
         self.setPalette(palette1)
         self.showChess()
@@ -565,6 +565,7 @@ if __name__ == '__main__':
     get_pic(background3_jpg, 'background3.jpg')
     get_pic(background4_jpg, 'background4.jpg')
     get_pic(background5_jpg, 'background5.jpg')
+    get_pic(background6_jpg, 'background6.jpg')
     get_pic(ICON_ico, 'ICON.ico')
     get_pic(EMPTY_png, 'EMPTY.png')
     get_pic(BLACK_png, 'BLACK.png')
@@ -582,10 +583,11 @@ if __name__ == '__main__':
     get_pic(libgcc_s_sjlj_1_dll, 'libgcc_s_sjlj-1.dll')
     get_pic(libstdc___6_dll, 'libstdc++-6.dll')
     get_pic(libwinpthread_1_dll, 'libwinpthread-1.dll')
-    sources = ["background1.jpg", "background2.jpg", "background3.jpg", "background4.jpg", "background5.jpg", "ICON.ico", "EMPTY.png", "BLACK.png", "WHITE.png", "BLOCK.png", "CANGO.png", "CANBLOCK.png", "HINT.png", "NEWGAME.png", "REDO.png", "READ.png", "SAVE.png", "SKIN.png", "bot.exe", "libgcc_s_sjlj-1.dll", "libstdc++-6.dll", "libwinpthread-1.dll"]
+    sources = ["background1.jpg", "background2.jpg", "background3.jpg", "background4.jpg", "background5.jpg", "background6.jpg", "ICON.ico", "EMPTY.png", "BLACK.png", "WHITE.png", "BLOCK.png", "CANGO.png", "CANBLOCK.png", "HINT.png", "NEWGAME.png", "REDO.png", "READ.png", "SAVE.png", "SKIN.png", "bot.exe", "libgcc_s_sjlj-1.dll", "libstdc++-6.dll", "libwinpthread-1.dll"]
     # 隐藏资源文件
+    CREATE_NO_WINDOW = 0x08000000
     for source in sources:
-        os.system('attrib +s +h ' + source)
+        subprocess.call('attrib +s +h ' + source, creationflags=CREATE_NO_WINDOW)
     app = QApplication(sys.argv)
     gamewindow = GameWindow()
     gamewindow.show()

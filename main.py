@@ -106,6 +106,7 @@ class GameWindow(QWidget):
         self.Read_button = QPushButton(self)
         self.Skin_button = QPushButton(self)
         self.NewGame_button = QPushButton(self)
+        self.Setsumei_button = QPushButton(self)
 
         # self.Redo_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'REDO.png')))
         self.Redo_button.setIcon(QIcon('REDO.png'))
@@ -132,6 +133,7 @@ class GameWindow(QWidget):
         self.Read_button.setText("读档")
         self.Skin_button.setText("换肤")
         self.NewGame_button.setText("新游戏")
+        self.Setsumei_button.setText("说明")
 
         self.Redo_button.setStyleSheet( "QPushButton{color:black}"
                               "QPushButton{background-color:white}"
@@ -169,6 +171,12 @@ class GameWindow(QWidget):
                               "QPushButton{padding:20px 40px}"
                               "QPushButton{font-size: 36px}"
                               "QPushButton{font-family:'Microsoft YaHei'}")
+        self.Setsumei_button.setStyleSheet( "QPushButton{color:black}"
+                              "QPushButton{background-color:white}"
+                              "QPushButton{border:2px}"
+                              "QPushButton{padding:1px 2px}"
+                              "QPushButton{font-size: 18px}"
+                              "QPushButton{font-family:'Microsoft YaHei'}")
 
         self.Redo_button.setGeometry(1260, 130, 280, 100)
         self.Hint_button.setGeometry(1260, 280, 280, 100)
@@ -176,6 +184,7 @@ class GameWindow(QWidget):
         self.Read_button.setGeometry(1260, 580, 280, 100)
         self.Skin_button.setGeometry(1260, 730, 280, 100)
         self.NewGame_button.setGeometry(1260, 880, 280, 100)
+        self.Setsumei_button.setGeometry(1540, 1050, 60, 30)
 
         self.Redo_button.clicked.connect(self.regret)
         self.Hint_button.clicked.connect(self.hint)
@@ -183,6 +192,7 @@ class GameWindow(QWidget):
         self.Read_button.clicked.connect(self.readLog)
         self.Skin_button.clicked.connect(self.changeSkin)
         self.NewGame_button.clicked.connect(self.newGame)
+        self.Setsumei_button.clicked.connect(self.setsumei)
 
     def showChess(self):
         for i in range(8):
@@ -536,8 +546,12 @@ class GameWindow(QWidget):
         paletteNxt.setBrush(self.backgroundRole(), QBrush(QPixmap('background' + str(self.skinCur) + '.jpg')))
         self.setPalette(paletteNxt)
     # <----------------------------------------待施工------------------------------------>
-    def howToPlay(self): # 游戏说明
-        pass
+    def setsumei(self): # 游戏说明
+        QMessageBox.information(self, 'ゲーム説明', '点选棋子以完成移动操作\n \
+                                                     点选存档/读档/换肤/新游戏/悔棋进行字面意思的操作\n \
+                                                     在想要开始人机的回合，点选人机即可启动人机模式，机器人所执棋子为开启人机模式的回合的移动方\n \
+                                                     在人机模式开启之后，机器人所执颜色棋子将会自行进行移动，每一步会在1s内完成，请稍事等待，尽量不要进行奇怪的操作，因为我不想写async（？？？\n \
+                                                     当然，如果恁非要进行奇怪的操作也大可试试，如果出现程序错误欢迎给我提issues！', QMessageBox.Ok)
         
 if __name__ == '__main__':
     if not os.path.exists('data'):

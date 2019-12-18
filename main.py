@@ -647,6 +647,9 @@ class GameWindow(QMainWindow):
             QMessageBox.critical(self,"打则死路一条！","恁已经处于人机对战模式！",QMessageBox.Ok)
 
     def changeSkin(self): # 换肤
+        # memCur = self.skinCur
+        # while self.skinCur == memCur:
+            # self.skinCur = random.randint(1, self.skinNum+1) # 随机换肤
         self.skinCur = (self.skinCur) % self.skinNum + 1
         paletteNxt = QPalette()
         paletteNxt.setBrush(self.backgroundRole(), QBrush(QPixmap('.\\source\\background' + str(self.skinCur) + '.jpg')))

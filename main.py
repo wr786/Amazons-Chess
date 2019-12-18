@@ -86,6 +86,7 @@ class GameWindow(QMainWindow):
         self.setWindowTitle('Amazons ~ 再生産！ © wr786')
         # self.setWindowIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'ICON.ico')))
         self.setWindowIcon(QIcon('.\\source\\ICON.ico'))
+        self.setWindowFlags(Qt.FramelessWindowHint) # 隐藏边框
         self.setFixedSize(1600, 1080)
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
@@ -167,6 +168,8 @@ class GameWindow(QMainWindow):
         self.Skin_button = QPushButton(self)
         self.NewGame_button = QPushButton(self)
         self.Setsumei_button = QPushButton(self)
+        self.Exit_button = QPushButton(self)
+        self.Minimize_button = QPushButton(self)
 
         # self.Redo_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'REDO.png')))
         self.Redo_button.setIcon(QIcon('.\\source\\REDO.png'))
@@ -194,6 +197,8 @@ class GameWindow(QMainWindow):
         self.Skin_button.setText("换肤")
         self.NewGame_button.setText("新游戏")
         self.Setsumei_button.setText("说明")
+        self.Exit_button.setText("×")
+        self.Minimize_button.setText("-")
 
         self.Redo_button.setStyleSheet( "QPushButton{color:black}"
                               "QPushButton{background-color:white}"
@@ -237,6 +242,18 @@ class GameWindow(QMainWindow):
                               "QPushButton{padding:1px 2px}"
                               "QPushButton{font-size: 18px}"
                               "QPushButton{font-family:'Microsoft YaHei'}")
+        self.Exit_button.setStyleSheet( "QPushButton{color:red}"
+                              "QPushButton{border:2px}"
+                              "QPushButton{padding:1px 2px}"
+                              "QPushButton{font-size: 60px}"
+                              "QPushButton{font-family:'Microsoft YaHei'}"
+                              "QPushButton{background-color:transparent;}")
+        self.Minimize_button.setStyleSheet( "QPushButton{color:purple}"
+                              "QPushButton{border:2px}"
+                              "QPushButton{padding:1px 2px}"
+                              "QPushButton{font-size: 60px}"
+                              "QPushButton{font-family:'Microsoft YaHei'}"
+                              "QPushButton{background-color:transparent;}")
 
         self.Redo_button.setGeometry(1260, 130, 280, 100)
         self.Hint_button.setGeometry(1260, 280, 280, 100)
@@ -245,6 +262,8 @@ class GameWindow(QMainWindow):
         self.Skin_button.setGeometry(1260, 730, 280, 100)
         self.NewGame_button.setGeometry(1260, 880, 280, 100)
         self.Setsumei_button.setGeometry(1540, 1050, 60, 30)
+        self.Exit_button.setGeometry(1540, 0, 60, 60)
+        self.Minimize_button.setGeometry(1480, 0, 60, 60)
 
         self.Redo_button.clicked.connect(self.regret)
         self.Hint_button.clicked.connect(self.hint)
@@ -253,6 +272,8 @@ class GameWindow(QMainWindow):
         self.Skin_button.clicked.connect(self.changeSkin)
         self.NewGame_button.clicked.connect(self.newGame)
         self.Setsumei_button.clicked.connect(self.setsumei)
+        self.Exit_button.clicked.connect(self.exit)
+        self.Minimize_button.clicked.connect(self.minimize)
 
     def showChess(self):
         for i in range(8):
@@ -638,6 +659,11 @@ class GameWindow(QMainWindow):
                                                      在人机模式开启之后，机器人所执颜色棋子将会自行进行移动，每一步会在1s内完成，请稍事等待，尽量不要进行奇怪的操作，因为我不想写async（？？？\n \
                                                      当然，如果恁非要进行奇怪的操作也大可试试，如果出现程序错误欢迎给我提issues！', QMessageBox.Ok)
 
+    def exit(self):
+        raise sys.exit()
+
+    def minimize(self):
+        self.setWindowState(Qt.WindowMinimized)
     # <----------------------------------------待施工------------------------------------>
         
 if __name__ == '__main__':

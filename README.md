@@ -7,3 +7,9 @@
 
 以上。
 
+### 对选了计算概论的同学的安利项目：
+
+- **[Key-to-PKUPC](https://github.com/wr786/Key-to-PKUPC)**
+
+- **[PKUPC-Code-Archiver](https://github.com/wr786/PKUPC-Code-Archiver)**
+

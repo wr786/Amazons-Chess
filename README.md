@@ -15,6 +15,8 @@
 
 或者可以直接[点此跳转到下载页面](https://github.com/wr786/Amazons-Chess/releases)。
 
+如果恁是北京大学的学生，也可以通过[北大网盘](https://disk.pku.edu.cn:443/link/4CC3B6CD61AC9657DCA00D97AD3F984E)来进行下载。
+
 ## 使用说明：
 
 使用说明什么的程序里面都有。

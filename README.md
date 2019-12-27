@@ -1,16 +1,13 @@
-
-
 <div align="center">
-    <img src="./source/loading.jpg" height="100" />
+
+<img src="./source/loading.jpg" height="100" />
+
 # Amazons-Chess
 
 [![cnblogs](https://img.shields.io/badge/release-v1.1.0-brightgreen.svg)](https://github.com/wr786/Amazons-Chess/releases)
-
 [![GitHub license](https://img.shields.io/github/license/wr786/Amazons-Chess.svg)](https://github.com/wr786/Amazons-Chess)
 
 </div>
-
-
 
 ### 下载方法：
 

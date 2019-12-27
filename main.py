@@ -48,6 +48,9 @@ class LoadingWindow(QWidget):
         get_pic(background6_jpg, 'background6.jpg')
         get_pic(ICON_ico, 'ICON.ico')
         get_pic(EMPTY_png, 'EMPTY.png')
+        get_pic(BLACK_png, 'BLACK_ht.png')
+        get_pic(WHITE_png, 'WHITE_ht.png')
+        get_pic(BLOCK_png, 'BLOCK_ht.png')
         get_pic(BLACK_png, 'BLACK.png')
         get_pic(WHITE_png, 'WHITE.png')
         get_pic(BLOCK_png, 'BLOCK.png')
@@ -159,6 +162,8 @@ class GameWindow(QMainWindow):
             self.turn_logger.setText("当前回合：{} | 当前行动方：白方".format(self.turns))
         self.AIMode = 0
         self.endGame = False
+        self.recordMode = False
+        self.AILastMove = False
 
     def init_buttons(self):
         self.Redo_button = QPushButton(self)
@@ -170,6 +175,7 @@ class GameWindow(QMainWindow):
         self.Setsumei_button = QPushButton(self)
         self.Exit_button = QPushButton(self)
         self.Minimize_button = QPushButton(self)
+        self.ShowRecode_button = QPushButton(self)
 
         # self.Redo_button.setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'REDO.png')))
         self.Redo_button.setIcon(QIcon('.\\source\\REDO.png'))
@@ -199,6 +205,7 @@ class GameWindow(QMainWindow):
         self.Setsumei_button.setText("说明")
         self.Exit_button.setText("×")
         self.Minimize_button.setText("-")
+        self.ShowRecode_button.setText("回放")
 
         self.Redo_button.setStyleSheet( "QPushButton{color:black}"
                               "QPushButton{background-color:white}"
@@ -254,6 +261,12 @@ class GameWindow(QMainWindow):
                               "QPushButton{font-size: 60px}"
                               "QPushButton{font-family:'Microsoft YaHei'}"
                               "QPushButton{background-color:transparent;}")
+        self.ShowRecode_button.setStyleSheet( "QPushButton{color:black}"
+                              "QPushButton{background-color:white}"
+                              "QPushButton{border:2px}"
+                              "QPushButton{padding:1px 2px}"
+                              "QPushButton{font-size: 18px}"
+                              "QPushButton{font-family:'Microsoft YaHei'}")
 
         self.Redo_button.setGeometry(1260, 130, 280, 100)
         self.Hint_button.setGeometry(1260, 280, 280, 100)
@@ -264,6 +277,7 @@ class GameWindow(QMainWindow):
         self.Setsumei_button.setGeometry(1540, 1050, 60, 30)
         self.Exit_button.setGeometry(1540, 0, 60, 60)
         self.Minimize_button.setGeometry(1480, 0, 60, 60)
+        self.ShowRecode_button.setGeometry(1480, 1050, 60, 30)
 
         self.Redo_button.clicked.connect(self.regret)
         self.Hint_button.clicked.connect(self.hint)
@@ -274,6 +288,7 @@ class GameWindow(QMainWindow):
         self.Setsumei_button.clicked.connect(self.setsumei)
         self.Exit_button.clicked.connect(self.exit)
         self.Minimize_button.clicked.connect(self.minimize)
+        self.ShowRecode_button.clicked.connect(self.showRecode)
 
     def showChess(self):
         for i in range(8):
@@ -296,6 +311,8 @@ class GameWindow(QMainWindow):
 
     def selectChess(self):
         # 此处应有判断是否为自己的棋子
+        if self.recordMode:
+            return
         if self.selectChessFlag: # 此处应有弹出提示框
             QMessageBox.critical(self,"请先把这步走完！","恁已经选择了一个棋子，请先把这步走完！",QMessageBox.Ok)
             return
@@ -350,9 +367,17 @@ class GameWindow(QMainWindow):
         self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('.\\source\\EMPTY.png'))
         if self.turn_player == 1:
             # self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+            if self.recordMode:
+                self.ChessBoard_unit[x][y].setIcon(QIcon('.\\source\\BLACK_ht.png'))
+                QApplication.processEvents()
+                time.sleep(0.5)
             self.ChessBoard_unit[x][y].setIcon(QIcon('.\\source\\BLACK.png'))
         else:
             # self.ChessBoard_unit[x][y].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
+            if self.recordMode:
+                self.ChessBoard_unit[x][y].setIcon(QIcon('.\\source\\WHITE_ht.png'))
+                QApplication.processEvents()
+                time.sleep(0.5)
             self.ChessBoard_unit[x][y].setIcon(QIcon('.\\source\\WHITE.png'))
         self.ex[self.turns] = x
         self.ey[self.turns] = y
@@ -392,12 +417,27 @@ class GameWindow(QMainWindow):
         self.ChessBoard_unit_content[self.ex[self.turns]][self.ey[self.turns]] = self.turn_player
         if self.turn_player == 1:
             # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+            if self.recordMode:
+                self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('.\\source\\BLACK_ht.png'))
+                time.sleep(1)
+                QApplication.processEvents()
             self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('.\\source\\BLACK.png'))
         else:
             # self.ChessBoard_unit[self.ex][self.ey].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
+            if self.recordMode:
+                self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('.\\source\\WHITE_ht.png'))
+                time.sleep(1)
+                QApplication.processEvents()
             self.ChessBoard_unit[self.ex[self.turns]][self.ey[self.turns]].setIcon(QIcon('.\\source\\WHITE.png'))
         self.ChessBoard_unit_content[self.bx[self.turns]][self.by[self.turns]] = -1
         # self.ChessBoard_unit[self.bx][self.by].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLOCK.png')))
+        if self.recordMode:
+            self.ChessBoard_unit[self.bx[self.turns]][self.by[self.turns]].setIcon(QIcon('.\\source\\BLOCK_ht.png'))
+            time.sleep(0.3)
+            QApplication.processEvents()
+        elif self.AILastMove:
+            time.sleep(0.3)
+            QApplication.processEvents()
         self.ChessBoard_unit[self.bx[self.turns]][self.by[self.turns]].setIcon(QIcon('.\\source\\BLOCK.png'))
         self.selectChessFlag = False
         for i in range(4):
@@ -479,6 +519,7 @@ class GameWindow(QMainWindow):
         self.showChess()
         self.AIMode = 0
         self.winFlag = False
+        self.AILastMove = False
 
     def regret(self): # 悔棋     
         if self.selectChessFlag:
@@ -507,9 +548,17 @@ class GameWindow(QMainWindow):
             self.ChessBoard_unit_content[self.ox[self.turns]][self.oy[self.turns]] = self.turn_player
             if self.turn_player == 1:
                 # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'BLACK.png')))
+                if self.recordMode:
+                    self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('.\\source\\BLACK_ht.png'))
+                    QApplication.processEvents()
+                    time.sleep(0.5)
                 self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('.\\source\\BLACK.png'))
             else:
                 # self.ChessBoard_unit[self.ox][self.oy].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'WHITE.png')))
+                if self.recordMode:
+                    self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('.\\source\\WHITE_ht.png'))
+                    QApplication.processEvents()
+                    time.sleep(0.5)
                 self.ChessBoard_unit[self.ox[self.turns]][self.oy[self.turns]].setIcon(QIcon('.\\source\\WHITE.png'))
             for i in range(4):
                 if self.chess[self.turn_player][i] == self.ex[self.turns] * 10 + self.ey[self.turns]: # 找到被移动的棋
@@ -619,7 +668,7 @@ class GameWindow(QMainWindow):
             self.bx[self.turns] = int(blkx)
             self.by[self.turns] = int(blky)
             self.procMove()
-        for i in range((2*my_turn-1) - 1):
+        for i in range((2*my_turn-1) - 2):
             (orix, oriy, endx, endy, blkx, blky) = f.readline().split(" ")
             self.ox[self.turns] = int(orix)
             self.oy[self.turns] = int(oriy)
@@ -629,7 +678,18 @@ class GameWindow(QMainWindow):
             self.by[self.turns] = int(blky)
             self.procMove()
             # print("{} {} {} {} {} {}".format(orix, oriy, endx, endy, blkx, blky))
+        if (2*my_turn-1) - 1 > 0:
+            (orix, oriy, endx, endy, blkx, blky) = f.readline().split(" ")
+            self.ox[self.turns] = int(orix)
+            self.oy[self.turns] = int(oriy)
+            self.ex[self.turns] = int(endx)
+            self.ey[self.turns] = int(endy)
+            self.bx[self.turns] = int(blkx)
+            self.by[self.turns] = int(blky)
+            self.AILastMove = True
+            self.procMove()     
         f.close()
+        self.AILastMove = False
         self.freeMove = False
         subprocess.call('attrib +s +h .\\data\\AI.amazons', creationflags=CREATE_NO_WINDOW) # 隐藏AI文件
 
@@ -661,6 +721,27 @@ class GameWindow(QMainWindow):
                                                      在想要开始人机的回合，点选人机即可启动人机模式，机器人所执棋子为开启人机模式的回合的移动方\n \
                                                      在人机模式开启之后，机器人所执颜色棋子将会自行进行移动，每一步会在1s内完成，请稍事等待，尽量不要进行奇怪的操作，因为我不想写async（？？？\n \
                                                      当然，如果恁非要进行奇怪的操作也大可试试，如果出现程序错误欢迎给我提issues！', QMessageBox.Ok)
+
+    def showRecode(self):
+        self.recordMode = True
+        self.Redo_button.clicked.disconnect(self.regret)
+        self.Hint_button.clicked.disconnect(self.hint)
+        self.Save_button.clicked.disconnect(self.saveLog)
+        self.Read_button.clicked.disconnect(self.readLog)
+        self.Skin_button.clicked.disconnect(self.changeSkin)
+        self.NewGame_button.clicked.disconnect(self.newGame)
+        self.Setsumei_button.clicked.disconnect(self.setsumei)
+        self.ShowRecode_button.clicked.disconnect(self.showRecode)
+        self.readLog()
+        self.recordMode = False
+        self.Redo_button.clicked.connect(self.regret)
+        self.Hint_button.clicked.connect(self.hint)
+        self.Save_button.clicked.connect(self.saveLog)
+        self.Read_button.clicked.connect(self.readLog)
+        self.Skin_button.clicked.connect(self.changeSkin)
+        self.NewGame_button.clicked.connect(self.newGame)
+        self.Setsumei_button.clicked.connect(self.setsumei)
+        self.ShowRecode_button.clicked.connect(self.showRecode)
 
     def exit(self):
         raise sys.exit()

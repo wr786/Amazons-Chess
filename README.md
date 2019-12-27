@@ -5,7 +5,7 @@
 
 点击目录上方的`Release`以查看并获取可执行文件的下载链接。
 
-或者可以直接**[点此跳转到下载页面](https://github.com/wr786/Amazons-Chess/releases)**。
+或者可以直接[点此跳转到下载页面](https://github.com/wr786/Amazons-Chess/releases)。
 
 ### 使用说明：
 

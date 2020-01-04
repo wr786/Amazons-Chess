@@ -21,6 +21,8 @@
 
 使用说明什么的程序里面都有。
 
+请注意！本repo仅为UI部分，想要“参考”AI部分的请移步[Amazing-Amazons-Botzone-Bot](https://github.com/wr786/Amazing-Amazons-Botzone-Bot)
+
 ## 对学习计算概论的同学的安利项目：
 
 - **[Key-to-PKUPC](https://github.com/wr786/Key-to-PKUPC)**

@@ -573,6 +573,9 @@ class GameWindow(QMainWindow):
         self.winFlag = False
 
     def saveLog(self): # 存档
+        if self.selectChessFlag:
+            QMessageBox.critical(self,"不要脚踏两条船！","请先完成移动操作！",QMessageBox.Ok)
+            return
         # if self.winFlag == True:
         #     QMessageBox.critical(self, "这没有任何意义！", "胜负已判，还存什么档啊？", QMessageBox.Ok)
         #     return
@@ -593,6 +596,9 @@ class GameWindow(QMainWindow):
             # QMessageBox.information(self,"免得恁不知道就说一声","存档完了！",QMessageBox.Ok)
         
     def readLog(self): # 读档
+        if self.selectChessFlag:
+            QMessageBox.critical(self,"不要脚踏两条船！","请先完成移动操作！",QMessageBox.Ok)
+            return
         log_name = QFileDialog.getOpenFileName(self,'选择存档','.\\data\\','Text files (*.amazons)')
         # f = open(os.path.join(os.path.abspath('.'), 'data', 'archive.amazons'), "r")
         if log_name[0][-1:] == '': # 无选择
@@ -723,6 +729,9 @@ class GameWindow(QMainWindow):
                                                      当然，如果恁非要进行奇怪的操作也大可试试，如果出现程序错误欢迎给我提issues！', QMessageBox.Ok)
 
     def showRecode(self):
+        if self.selectChessFlag:
+            QMessageBox.critical(self,"不要脚踏两条船！","请先完成移动操作！",QMessageBox.Ok)
+            return
         self.recordMode = True
         self.Redo_button.clicked.disconnect(self.regret)
         self.Hint_button.clicked.disconnect(self.hint)
@@ -742,6 +751,9 @@ class GameWindow(QMainWindow):
         self.NewGame_button.clicked.connect(self.newGame)
         self.Setsumei_button.clicked.connect(self.setsumei)
         self.ShowRecode_button.clicked.connect(self.showRecode)
+        time.sleep(2)
+        QMessageBox.information(self,"回放终了","回放完成！点击重置游戏",QMessageBox.Ok)
+        self.newGame()
 
     # 以下为无边框所需的功能
     def mousePressEvent(self, event):

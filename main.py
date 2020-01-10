@@ -108,7 +108,7 @@ class GameWindow(QMainWindow):
 
     def init_chess_board(self):
         self.turn_logger = QLabel(self)
-        self.turn_logger.setGeometry(150, 100, 350, 50)
+        self.turn_logger.setGeometry(120, 70, 350, 50)
         self.turn_logger.setStyleSheet("QLabel{color:black}"
                                   "QLabel{background-color:white}"
                                   "QLabel{border:2px}"
@@ -122,9 +122,9 @@ class GameWindow(QMainWindow):
                 # TEST
                 self.ChessBoard_unit[i][j].setStyleSheet("QPushButton{color:white}"
                                   "QPushButton{background-color:white}"
-                                  "QPushButton{border:2px}"
+                                  "QPushButton{border:0px}"
                                   "QPushButton{padding:0px 0px}")
-                self.ChessBoard_unit[i][j].setGeometry(250 + 100*(i-1), 250 + 100*(j-1), 100, 100)
+                self.ChessBoard_unit[i][j].setGeometry(230 + 110*(i-1), 230 + 110*(j-1), 100, 100)
                 self.ChessBoard_unit[i][j].setIconSize(QSize(110,110))
                 # self.ChessBoard_unit[i][j].setIcon(QIcon(os.path.join(os.path.abspath('.'), 'source', 'EMPTY.png')))
                 self.ChessBoard_unit[i][j].setIcon(QIcon('.\\source\\EMPTY.png'))
@@ -274,9 +274,9 @@ class GameWindow(QMainWindow):
         self.Read_button.setGeometry(1260, 580, 280, 100)
         self.Skin_button.setGeometry(1260, 730, 280, 100)
         self.NewGame_button.setGeometry(1260, 880, 280, 100)
-        self.Setsumei_button.setGeometry(1540, 1050, 60, 30)
         self.Exit_button.setGeometry(1540, 0, 60, 60)
         self.Minimize_button.setGeometry(1480, 0, 60, 60)
+        self.Setsumei_button.setGeometry(1540, 1050, 60, 30)
         self.ShowRecode_button.setGeometry(1480, 1050, 60, 30)
 
         self.Redo_button.clicked.connect(self.regret)

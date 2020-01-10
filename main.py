@@ -5,7 +5,7 @@ import os
 import time
 import random
 import subprocess
-from PyQt5.QtGui import QIcon, QPalette, QBrush, QPixmap
+from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from base64 import *
@@ -742,6 +742,23 @@ class GameWindow(QMainWindow):
         self.NewGame_button.clicked.connect(self.newGame)
         self.Setsumei_button.clicked.connect(self.setsumei)
         self.ShowRecode_button.clicked.connect(self.showRecode)
+
+    # 以下为无边框所需的功能
+    def mousePressEvent(self, event):
+        if event.button()==Qt.LeftButton:
+            self.m_flag=True
+            self.m_Position=event.globalPos()-self.pos() # 获取鼠标相对窗口的位置
+            event.accept()
+            self.setCursor(QCursor(Qt.OpenHandCursor))  # 更改鼠标图标
+            
+    def mouseMoveEvent(self, QMouseEvent):
+        if Qt.LeftButton and self.m_flag:  
+            self.move(QMouseEvent.globalPos()-self.m_Position) # 更改窗口位置
+            QMouseEvent.accept()
+            
+    def mouseReleaseEvent(self, QMouseEvent):
+        self.m_flag=False
+        self.setCursor(QCursor(Qt.ArrowCursor))
 
     def exit(self):
         raise sys.exit()

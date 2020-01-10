@@ -1,5 +1,4 @@
 <div align="center">
-
 <img src="./source/loading.jpg" height="100" />
 
 # Amazons-Chess
